@@ -32,11 +32,11 @@ auto selftest_lambda_ = [&]() {
 
 #define SELFTEST_BASE2(fatal, qty) \
 ;selftest_died_ = false;}; \
-auto selftest_fails1_ = ::testing::reporter->test_info->fatal_failure_count + \
-::testing::reporter->test_info->nonfatal_failure_count; \
+auto selftest_fails1_ = ::testing::reporter()->test_info->fatal_failure_count + \
+::testing::reporter()->test_info->nonfatal_failure_count; \
 selftest_lambda_(); \
-auto selftest_fails2_ = ::testing::reporter->test_info->fatal_failure_count + \
-::testing::reporter->test_info->nonfatal_failure_count; \
+auto selftest_fails2_ = ::testing::reporter()->test_info->fatal_failure_count + \
+::testing::reporter()->test_info->nonfatal_failure_count; \
 if(selftest_died_ != fatal || selftest_fails2_ - selftest_fails1_ != qty) \
 SELFTEST_ABORT \
 } while (false);
@@ -58,7 +58,7 @@ SELFTEST_BASE1 expr SELFTEST_BASE2(false, 0)
 
 
 int main() {
-    testing::reporter = new testing::DefaultReporter;
+    testing::reporter(new testing::DefaultReporter);
     auto result = testing::Runner::RunAll();
     if (result == EXIT_SUCCESS) SELFTEST_ABORT;
     std::cerr << std::endl << "Self-test was successful." << std::endl;
@@ -69,9 +69,9 @@ int main() {
 
 TEST(Control, TraceAndExplicit) {
     {
-        SCOPED_TRACE("");
+        SCOPED_TRACE();
         SELFTEST_FATAL( FAIL() << "Game on!"; );
-        SCOPED_TRACE("Whoa");
+        SCOPED_TRACE() << "Whoa" << ", cowboy!";
         SELFTEST_NONFATAL( ADD_FAILURE(); );
     }
     SELFTEST_NONFATAL( ADD_FAILURE_AT("file.bogus", -1); );
@@ -222,12 +222,8 @@ protected:
 template<typename T>
 T TypedFixture<T>::dat = 0;
 
-TEST_T(TypedFixture, Simple, int) {
-    Test();
-}
-TEST_T(TypedFixture, Simple, float) {
-    Test();
-}
+TEST_T(TypedFixture, int, Test)
+TEST_T(TypedFixture, float, Test);
 
 // Predecate tests
 

@@ -28,6 +28,7 @@ namespace testing {
         virtual void Run() = 0;
         virtual void Pass(long ms) = 0;
         virtual void Fail(long ms) = 0;
+        virtual void Bench(long iterations, double us) = 0;
         virtual void Print(::std::string message) = 0;
         virtual void Trace(::std::string message, const char* file, long line) = 0;
         virtual void Error(::std::string message, const char* file, long line) = 0;
@@ -39,14 +40,14 @@ namespace testing {
         DefaultReporter(::std::ostream& ostream = ::std::cout) {
             this->ostream = &ostream;
         }
-    private:
+    protected:
         ::std::ostream* ostream;
         size_t cases;
         size_t total_qty;
         size_t case_qty;
         ::std::vector<::std::string> failures;
 
-        ::std::string Pluralize(size_t qty, const char* label = nullptr) {
+        virtual ::std::string Pluralize(size_t qty, const char* label = nullptr) {
             auto str = ::std::to_string(qty);
             str += " ";
             if (label != nullptr) str += label;
@@ -58,7 +59,7 @@ namespace testing {
             return str;
         }
 
-        void Start(size_t cases, size_t total_qty) {
+        virtual void Start(size_t cases, size_t total_qty) {
             this->cases = cases;
             this->total_qty = total_qty;
             failures.clear();
@@ -66,7 +67,7 @@ namespace testing {
             *ostream << Pluralize(cases, "test case") << "." << ::std::endl;
         }
 
-        void End(long ms) {
+        virtual void End(long ms) {
             *ostream << "[==========] " << Pluralize(total_qty) << " from ";
             *ostream << Pluralize(cases, "test case") << " ran. ";
             *ostream << "(" << ms << " ms total)" << ::std::endl;
@@ -80,39 +81,43 @@ namespace testing {
             }
         }
 
-        void StartCase(size_t case_qty) {
+        virtual void StartCase(size_t case_qty) {
             this->case_qty = case_qty;
             *ostream << "[----------] " << Pluralize(case_qty) << " from " << test_info->test_case_name() << ::std::endl;
 
         }
 
-        void EndCase(long ms) {
+        virtual void EndCase(long ms) {
             *ostream << "[----------] " << Pluralize(case_qty) << " from " << test_info->test_case_name();
             *ostream << " (" << ms << " ms total)" << ::std::endl << ::std::endl;
         }
 
-        void Run() {
+        virtual void Run() {
             *ostream << "[ RUN      ] " << test_info->name() << ::std::endl;
         }
 
-        void Pass(long ms) {
+        virtual void Pass(long ms) {
             *ostream << "[       OK ] " << test_info->name() << " (" << ms << " ms)" << ::std::endl;
         }
 
-        void Fail(long ms) {
+        virtual void Fail(long ms) {
             failures.push_back(test_info->name());
             *ostream << "[  FAILED  ] " << test_info->name() << " (" << ms << " ms)" << ::std::endl;
         }
+        
+        virtual void Bench(long iterations, double us) {
+            *ostream << "[   TIME   ] " << iterations << " iterations, " << us << " us" << ::std::endl;
+        }
 
-        void Print(::std::string message) {
+        virtual void Print(::std::string message) {
             *ostream << message << ::std::endl;
         }
 
-        void Trace(::std::string message, const char* file, long line) {
+        virtual void Trace(::std::string message, const char* file, long line) {
             *ostream << file << ":" << line << ": " << message << ::std::endl;
         }
 
-        void Error(::std::string message, const char* file, long line) {
+        virtual void Error(::std::string message, const char* file, long line) {
             *ostream << file << ":" << line << ": ";
             if (false) {
                 // For Apple Xcode, you can run script in build phase:

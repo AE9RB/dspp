@@ -1,12 +1,9 @@
-# dspp - Digital Signal Processing for C++11
+# dspp - DSP for C++
 
-The dspp library is a collection of C++11 algorithms which are
+The dspp library is a collection of algorithms which are
 the building blocks for software defined radios.
 
-## Features
-
- * No external dependencies.
+ * Modern C++11 using header-only templates.
+ * No external libraries are necessary.
  * Integrated benchmarking and testing framework.
- * All algorithms work with floats, doubles, and fixed point types.
- * Core building blocks are header-only templates.
- 
+ * All algorithms work with float, double, and fixed point types.

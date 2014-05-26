@@ -42,7 +42,8 @@ namespace testing {
         ::std::string str() const {
             return message->str();
         }
-        template <typename T> AssertionResult& operator<<(const T& value) {
+        template <typename T>
+        AssertionResult& operator<<(const T& value) {
             PrintTo(value, message);
             return *this;
         }
@@ -55,40 +56,67 @@ namespace testing {
         }
     };
 
-    AssertionResult AssertionSuccess() {
+    inline AssertionResult AssertionSuccess() {
         return AssertionResult(true);
     }
 
-    AssertionResult AssertionFailure() {
+    inline AssertionResult AssertionFailure() {
         return AssertionResult(false);
     }
 
 
     class ScopeTracer {
         struct TraceInfo {
-            ::std::string message;
+            ::std::ostringstream message;
             const char* file;
             long line;
         };
-        static ::std::vector<TraceInfo> trace;
+        static ::std::vector<TraceInfo*>& trace() {
+            static ::std::vector<TraceInfo*> trace;
+            return trace;
+        }
+        TraceInfo* trace_info;
+        bool do_pop = true;
     public:
-        ScopeTracer(::std::string message, const char* file, long line) {
-            trace.push_back(TraceInfo {message, file, line});
+        ScopeTracer(const char* file, long line) {
+            trace().push_back(new TraceInfo());
+            trace_info = trace().back();
+            trace_info->file = file;
+            trace_info->line = line;
+        }
+        ScopeTracer(ScopeTracer& other) :
+            trace_info(other.trace_info) {
+            other.do_pop = false;
+        }
+        ScopeTracer(ScopeTracer&& other) :
+            trace_info(other.trace_info) {
+            other.do_pop = false;
         }
         ~ScopeTracer() {
-            trace.pop_back();
+            if (do_pop) {
+                delete trace().back();
+                trace().pop_back();
+            }
         }
+        template <typename T>
+        ScopeTracer& operator<<(const T& value) {
+            PrintTo(value, &trace_info->message);
+            return *this;
+        }
+        ScopeTracer& operator<<(::std::ostream& (*basic_manipulator)(::std::ostream& stream)) {
+            trace_info->message << basic_manipulator;
+            return *this;
+        }
+        
         static void Report() {
-            if (!trace.empty()) {
-                reporter->Print("Scoped trace:");
-                for (auto& t: trace) {
-                    reporter->Trace(t.message, t.file, t.line);
+            if (!trace().empty()) {
+                reporter()->Print("Scoped trace:");
+                for (auto& t: trace()) {
+                    reporter()->Trace(t->message.str(), t->file, t->line);
                 }
             }
         }
     };
-    ::std::vector<ScopeTracer::TraceInfo> ScopeTracer::trace;
-
 
     class ResultReporter {
         AssertionResult* result;
@@ -99,8 +127,8 @@ namespace testing {
             result(&result),
             file(file),
             line(line) {
-            if (fatal) ++reporter->test_info->fatal_failure_count;
-            else ++reporter->test_info->nonfatal_failure_count;
+            if (fatal) ++reporter()->test_info->fatal_failure_count;
+            else ++reporter()->test_info->nonfatal_failure_count;
         }
         const void operator+=(const AssertionResult& user) {
             auto user_str = user.str();
@@ -114,11 +142,11 @@ namespace testing {
                 *result << "No message.";
             }
             ScopeTracer::Report();
-            reporter->Error(result->str(), file, line);
+            reporter()->Error(result->str(), file, line);
         }
     };
 
-    AssertionResult ResultEq(const char* expected_expression,
+    inline AssertionResult ResultEq(const char* expected_expression,
                              const char* actual_expression,
                              const ::std::string& expected_value,
                              const ::std::string& actual_value) {
@@ -201,7 +229,7 @@ namespace testing {
             return result;
         }
 
-        AssertionResult EQ(const char* e1, const char* e2, bool v1, AssertionResult v2) {
+        inline AssertionResult EQ(const char* e1, const char* e2, bool v1, AssertionResult v2) {
             if (v1 == v2) return AssertionSuccess();
             auto e_value = PrintToString(v1);
             auto a_value = ::std::string(v2 ? "true" : "false");
@@ -212,7 +240,7 @@ namespace testing {
             return ResultEq(e1, e2, e_value, a_value);
         }
 
-        AssertionResult EQ(const char* e1, const char* e2, bool v1, bool v2) {
+        inline AssertionResult EQ(const char* e1, const char* e2, bool v1, bool v2) {
             if (v1 == v2) return AssertionSuccess();
             return ResultEq(e1, e2, PrintToString(v1), PrintToString(v2));
         }
@@ -225,8 +253,20 @@ namespace testing {
             auto limit = ::std::numeric_limits<T>::epsilon() * 4;
             if (fabs(v1 - v2) <= limit) return AssertionSuccess();
             ::std::stringstream vs1, vs2;
-            vs1 << std::setprecision(::std::numeric_limits<T>::digits10 + 2) << v1;
-            vs2 << std::setprecision(::std::numeric_limits<T>::digits10 + 2) << v2;
+            vs1 << ::std::setprecision(::std::numeric_limits<T>::digits10 + 2) << v1;
+            vs2 << ::std::setprecision(::std::numeric_limits<T>::digits10 + 2) << v2;
+            return ResultEq(e1, e2, vs1.str(), vs2.str());
+        }
+
+        template<typename T>
+        AssertionResult EQ(const char* e1, const char* e2, ::std::complex<T> v1, ::std::complex<T> v2,
+                           typename ::std::enable_if<::std::is_floating_point<T>::value >::type* = 0) {
+            auto limit = ::std::numeric_limits<T>::epsilon() * 4;
+            if (fabs(v1.real() - v2.real()) <= limit && fabs(v1.imag() - v2.imag()) <= limit)
+                return AssertionSuccess();
+            ::std::stringstream vs1, vs2;
+            vs1 << ::std::setprecision(::std::numeric_limits<T>::digits10 + 2) << v1;
+            vs2 << ::std::setprecision(::std::numeric_limits<T>::digits10 + 2) << v2;
             return ResultEq(e1, e2, vs1.str(), vs2.str());
         }
 
@@ -271,9 +311,9 @@ BENCHTEST_AMBIGUOUS_ELSE_BLOCKER_ if (auto bt_result_ =
 
 #define BENCHTEST_NO_FATAL_FAILURE_(statement) \
 BENCHTEST_ASSERT_ ::testing::AssertionSuccess()) { \
-    auto bt_ffc_ = ::testing::reporter->test_info->fatal_failure_count; \
+    auto bt_ffc_ = ::testing::reporter()->test_info->fatal_failure_count; \
     {statement;} \
-    if (bt_ffc_ != ::testing::reporter->test_info->fatal_failure_count) { \
+    if (bt_ffc_ != ::testing::reporter()->test_info->fatal_failure_count) { \
         bt_result_ << "Expected: " #statement " doesn't generate new fatal failures." \
         << ::std::endl << "  Actual: it does."; \
         goto BENCHTEST_TOKEN_(benchtest_fatal_, __LINE__); \
@@ -361,8 +401,8 @@ BENCHTEST_CHECK_NO_THROW_(statement) \
 BENCHTEST_RESULT_FATAL_
 
 
-#define SCOPED_TRACE(message) \
-auto BENCHTEST_TOKEN_(benchtest_tracer_, __LINE__) = ::testing::ScopeTracer(message, __FILE__, __LINE__)
+#define SCOPED_TRACE() \
+auto BENCHTEST_TOKEN_(benchtest_tracer_, __LINE__) = ::testing::ScopeTracer(__FILE__, __LINE__)
 
 
 #define FAIL() \

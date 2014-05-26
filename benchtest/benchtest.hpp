@@ -24,25 +24,25 @@
 #include <vector>
 #include <map>
 #include <list>
+#include <complex>
 #include <cmath>
 
 namespace testing {
 
-    class Reporter* reporter = nullptr;
-
-    class Runner {
-        static ::std::map<::std::string, ::std::list<class Info*>> testers;
-    public:
-        static void AddTest(class Info*);
-        static int RunAll();
-    };
+    template<bool=true>
+    class Reporter* reporter(class Reporter *newr = nullptr) {
+        static class Reporter* r;
+        if (newr != nullptr) r = newr;
+        return r;
+    }
 
 }
 
-#include "tester.hpp"
+#include "info.hpp"
 #include "printer.hpp"
 #include "reporter.hpp"
 #include "asserter.hpp"
+#include "test.hpp"
 #include "runner.hpp"
 
 
@@ -67,9 +67,14 @@ BENCHTEST_(test_case_name, test_name, parent_class, )
 class BENCHTEST_CLASS_NAME_(test_case_name, test_name, type_name) : public parent_class<type_name> { \
 BENCHTEST_(test_case_name, test_name, parent_class, type_name)
 
-#define TEST(test_case_name, test_name) BENCHTEST_F_(test_case_name, test_name, ::testing::Test)
-#define TEST_F(test_fixture, test_name) BENCHTEST_F_(test_fixture, test_name, test_fixture)
-#define TEST_T(test_fixture, test_name, type_name) BENCHTEST_T_(test_fixture, test_name, test_fixture, type_name)
+#define TEST(test_case_name, test_name) \
+BENCHTEST_F_(test_case_name, test_name, ::testing::Test)
+
+#define TEST_F(test_fixture, test_name) \
+BENCHTEST_F_(test_fixture, test_name, test_fixture)
+
+#define TEST_T(test_fixture, type_name, method_name) \
+BENCHTEST_T_(test_fixture, method_name, test_fixture, type_name) {method_name();}
 
 
 #endif

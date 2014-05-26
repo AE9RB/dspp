@@ -21,20 +21,20 @@ namespace testing {
         *os << val;
     }
 
-    void PrintTo(const bool& val, ::std::ostream* os) {
+    inline void PrintTo(const bool& val, ::std::ostream* os) {
         if (val) *os << "true";
         else *os << "false";
     }
 
-    void PrintTo(const float& val, ::std::ostream* os) {
+    inline void PrintTo(const float& val, ::std::ostream* os) {
         *os << std::setprecision(::std::numeric_limits<float>::digits10) << val;
     }
 
-    void PrintTo(const double& val, ::std::ostream* os) {
+    inline void PrintTo(const double& val, ::std::ostream* os) {
         *os << std::setprecision(::std::numeric_limits<double>::digits10) << val;
     }
 
-    void PrintTo(const long double& val, ::std::ostream* os) {
+    inline void PrintTo(const long double& val, ::std::ostream* os) {
         *os << std::setprecision(::std::numeric_limits<long double>::digits10) << val;
     }
 
