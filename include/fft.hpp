@@ -20,54 +20,19 @@
 #include <complex>
 #include <array>
 #include <cmath>
+#include "util.hpp"
 
 namespace dspp {
     namespace FFT {
 
-        /// Computes and caches twiddle factors.
-        template<typename T, size_t N, int D>
-        class Twiddle4 {
-        public:
-            static std::array<std::complex<T>, N> t1;
-            static std::array<std::complex<T>, N> t2;
-            static std::array<std::complex<T>, N> t3;
-            Twiddle4() {
-                // Initialize values on first instance.
-                if (!t1[0].real()) {
-                    T theta = M_PI*2*D/(N*4);
-                    for (size_t i=0; i < N; ++i) {
-                        T phi = i*theta;
-                        t1[i] = std::complex<T>(cos(phi), sin(phi));
-                        t2[i] = std::complex<T>(cos(phi*2), sin(phi*2));
-                        t3[i] = std::complex<T>(cos(phi*3), sin(phi*3));
-                    }
-                }
-            }
-        };
-
-        // Storage for twiddle factors
-        template<typename T, size_t N, int D>
-        std::array<std::complex<T>, N> Twiddle4<T, N, D>::t1 {{0}};
-        template<typename T, size_t N, int D>
-        std::array<std::complex<T>, N> Twiddle4<T, N, D>::t2;
-        template<typename T, size_t N, int D>
-        std::array<std::complex<T>, N> Twiddle4<T, N, D>::t3;
-
-        /// Recursive template for mixing.
+        /// Recursive template for butterfly mixing.
         template<typename T, size_t N, int D>
         class Radix4 {
+            static const std::array<std::complex<T>, N/4> t1;
+            static const std::array<std::complex<T>, N/4> t2;
+            static const std::array<std::complex<T>, N/4> t3;
             static const size_t N4 = N/4;
-            const Twiddle4<T, N4, D> t;
             Radix4<T, N4, D> next;
-            /// Limited range (fast) multiplication of complex numbers.
-            static inline std::complex<T> multiply(const std::complex<T>& z, const std::complex<T>& w)
-            {
-                T a = z.real();
-                T b = z.imag();
-                T c = w.real();
-                T d = w.imag();
-                return std::complex<T>(a*c - b*d, a*d + b*c);
-            }
             /// Simplified multiplication for direction product.
             static inline std::complex<T> direction(const std::complex<T>& z)
             {
@@ -75,20 +40,20 @@ namespace dspp {
                 else return std::complex<T>(z.imag(), -z.real());
             }
         public:
-            inline void mix(std::complex<T>* data) {
+            void operator()(std::complex<T>* data) {
                 size_t i1 = N4;
                 size_t i2 = N4 + N4;
                 size_t i3 = i2 + N4;
-                next.mix(data);
-                next.mix(data+i1);
-                next.mix(data+i2);
-                next.mix(data+i3);
+                next(data);
+                next(data+i1);
+                next(data+i2);
+                next(data+i3);
                 // Index 0 twiddles are always (1+0i).
                 std::complex<T> a0 = data[0];
-                std::complex<T> a1 = data[i2];
                 std::complex<T> a2 = data[i1];
+                std::complex<T> a1 = data[i2];
                 std::complex<T> a3 = data[i3];
-                std::complex<T> b0 = (a1+a3);
+                std::complex<T> b0 = a1 + a3;
                 std::complex<T> b1 = direction(a1-a3);
                 data[0] = a0 + a2 + b0;
                 data[i1] = a0 - a2 + b1;
@@ -100,10 +65,10 @@ namespace dspp {
                     i2 = i1 + N4;
                     i3 = i2 + N4;
                     a0 = data[i0];
-                    a1 = multiply(data[i2], t.t1[i0]);
-                    a2 = multiply(data[i1], t.t2[i0]);
-                    a3 = multiply(data[i3], t.t3[i0]);
-                    b0 = (a1+a3);
+                    a2 = mul(data[i1], t2[i0]);
+                    a1 = mul(data[i2], t1[i0]);
+                    a3 = mul(data[i3], t3[i0]);
+                    b0 = a1 + a3;
                     b1 = direction(a1-a3);
                     data[i0] = a0 + a2 + b0;
                     data[i1] = a0 - a2 + b1;
@@ -113,11 +78,37 @@ namespace dspp {
             }
         };
 
-        /// Terminates template recursion for powers of 2.
+        /// Computes twiddle factors
+        template<typename T>
+        static std::vector<std::complex<T>> twiddle4(double a, size_t n, int d) {
+            std::vector<std::complex<T>> twids(n/4);
+            double theta = two_pi<double>()*d/n;
+            for (size_t i=0; i < n/4; ++i) {
+                double phi = theta * a * i;
+                twids[i] = std::complex<T>(cos(phi), sin(phi));
+            }
+            return twids;
+        }
+
+        // Storage and initialization for twiddle factors
+        template<typename T, size_t N, int D>
+        const std::array<std::complex<T>, N/4> Radix4<T, N, D>::t1(
+            *reinterpret_cast<std::array<std::complex<T>, N/4>*>(twiddle4<T>(1,N,D).data())
+        );
+        template<typename T, size_t N, int D>
+        const std::array<std::complex<T>, N/4> Radix4<T, N, D>::t2(
+            *reinterpret_cast<std::array<std::complex<T>, N/4>*>(twiddle4<T>(2,N,D).data())
+        );
+        template<typename T, size_t N, int D>
+        const std::array<std::complex<T>, N/4> Radix4<T, N, D>::t3(
+            *reinterpret_cast<std::array<std::complex<T>, N/4>*>(twiddle4<T>(3,N,D).data())
+        );
+
+        /// Terminates template recursion when not power of 4.
         template<typename T, int D>
         class Radix4<T, 2, D> {
         public:
-            inline void mix(std::complex<T>* data) {
+            inline void operator()(std::complex<T>* data) {
                 std::complex<T> a0 = data[0];
                 std::complex<T> a1 = data[1];
                 data[0] = a0 + a1;
@@ -129,7 +120,7 @@ namespace dspp {
         template<typename T, int D>
         class Radix4<T, 1, D> {
         public:
-            void mix(std::complex<T>* data) {
+            inline void operator()(std::complex<T>* data) {
                 // Do nothing.
             }
         };
@@ -171,12 +162,6 @@ namespace dspp {
             FFT(const std::array<std::complex<T>, N> &in, std::array<std::complex<T>, N> &out) :
                 in(&in), out(&out) {
             }
-            virtual void plan_dft() {
-                Radix4<T, N, -1>();
-            }
-            virtual void plan_idft() {
-                Radix4<T, N, 1>();
-            }
             virtual void dft() {
                 if (in==nullptr) dft(*out);
                 else dft(*in, *out);
@@ -186,24 +171,24 @@ namespace dspp {
                 else idft(*in, *out);
             }
             static void dft(std::array<std::complex<T>, N> &data) {
-                Radix4<T, N, -1> mixer;
+                Radix4<T, N, -1> butterfly;
                 reindex(data);
-                mixer.mix(&data[0]);
+                butterfly(&data[0]);
             }
             static void idft(std::array<std::complex<T>, N> &data) {
-                Radix4<T, N, 1> mixer;
+                Radix4<T, N, 1> butterfly;
                 reindex(data);
-                mixer.mix(&data[0]);
+                butterfly(&data[0]);
             }
             static void dft(const std::array<std::complex<T>, N> &in, std::array<std::complex<T>, N> &out) {
-                Radix4<T, N, -1> mixer;
+                Radix4<T, N, -1> butterfly;
                 reindex(in, out);
-                mixer.mix(&out[0]);
+                butterfly(&out[0]);
             }
             static void idft(const std::array<std::complex<T>, N> &in, std::array<std::complex<T>, N> &out) {
-                Radix4<T, N, 1> mixer;
+                Radix4<T, N, 1> butterfly;
                 reindex(in, out);
-                mixer.mix(&out[0]);
+                butterfly(&out[0]);
             }
         };
 
