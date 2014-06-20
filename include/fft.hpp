@@ -125,34 +125,131 @@ namespace dspp {
             }
         };
 
+        // Computes the bit reversal pattern for size N
+        template<size_t N>
+        struct BitReverse {
+            static std::vector<size_t> pattern;
+            static bool ispow4;
+            static std::vector<size_t> calc() {
+                std::vector<size_t> l;
+                l.push_back(0);
+                size_t m = 1;
+                size_t n = N;
+                while ((m << 2) < n) {
+                    n >>= 1;
+                    for (size_t j = 0; j < m; j++) {
+                        l.push_back(l[j] + n);
+                    }
+                    m <<= 1;
+                }
+                ispow4 = (m << 2) == n;
+                l.shrink_to_fit();
+                return l;
+            }
+        };
+
+        template<size_t N>
+        std::vector<size_t> BitReverse<N>::pattern = BitReverse<N>::calc();
+        template<size_t N>
+        bool BitReverse<N>::ispow4;
+
         /// Fast Fourier Transform.
         template<typename T, size_t N>
-        class FFT {
+        class FFT : public BitReverse<N> {
             static_assert((N > 1) & !(N & (N - 1)), "Array size must be a power of two.");
+            using BitReverse<N>::pattern;
+            using BitReverse<N>::ispow4;
+
             static void reindex(std::array<std::complex<T>, N> &data) {
-                for (size_t i=0, j=0; i<N; ++i) {
-                    if (j>i) {
-                        std::swap(data[i], data[j]);
+                size_t j1, k1, m = pattern.size();
+                if (ispow4) {
+                    size_t m2 = 2 * m;
+                    for (size_t k = 0; k < m; k++) {
+                        for (size_t j = 0; j < k; j++) {
+                            j1 = j + pattern[k];
+                            k1 = k + pattern[j];
+                            std::swap(data[j1], data[k1]);
+                            j1 += m;
+                            k1 += m2;
+                            std::swap(data[j1], data[k1]);
+                            j1 += m;
+                            k1 -= m;
+                            std::swap(data[j1], data[k1]);
+                            j1 += m;
+                            k1 += m2;
+                            std::swap(data[j1], data[k1]);
+                        }
+                        j1 = k + m + pattern[k];
+                        k1 = j1 + m;
+                        std::swap(data[j1], data[k1]);
                     }
-                    size_t m = N>>1;
-                    while (m>=1 && j>=m) {
-                        j -= m;
-                        m >>= 1;
+                } else {
+                    for (size_t k = 1; k < m; k++) {
+                        for (size_t j = 0; j < k; j++) {
+                            j1 = j + pattern[k];
+                            k1 = k + pattern[j];
+                            std::swap(data[j1], data[k1]);
+                            j1 += m;
+                            k1 += m;
+                            std::swap(data[j1], data[k1]);
+                        }
                     }
-                    j += m;
                 }
             }
+
             static void reindex(const std::array<std::complex<T>, N> &in, std::array<std::complex<T>, N> &out) {
-                for (size_t i=0, j=0; i<N; ++i) {
-                    out[i] = in[j];
-                    size_t m = N>>1;
-                    while (m>=1 && j>=m) {
-                        j -= m;
-                        m >>= 1;
+                size_t j1, k1, m = pattern.size();
+                if (ispow4) {
+                    size_t m2 = 2 * m;
+                    for (size_t k = 0; k < m; k++) {
+                        for (size_t j = 0; j < k; j++) {
+                            j1 = j + pattern[k];
+                            k1 = k + pattern[j];
+                            out[j1] = in[k1];
+                            out[k1] = in[j1];
+                            j1 += m;
+                            k1 += m2;
+                            out[j1] = in[k1];
+                            out[k1] = in[j1];
+                            j1 += m;
+                            k1 -= m;
+                            out[j1] = in[k1];
+                            out[k1] = in[j1];
+                            j1 += m;
+                            k1 += m2;
+                            out[j1] = in[k1];
+                            out[k1] = in[j1];
+                        }
+                        k1 = k + pattern[k];
+                        out[k1] = in[k1];
+                        j1 = k1 + m;
+                        k1 = j1 + m;
+                        out[j1] = in[k1];
+                        out[k1] = in[j1];
+                        k1 += m;
+                        out[k1] = in[k1];
                     }
-                    j += m;
+                } else {
+                    out[0] = in[0];
+                    out[m] = in[m];
+                    for (size_t k = 1; k < m; k++) {
+                        for (size_t j = 0; j < k; j++) {
+                            j1 = j + pattern[k];
+                            k1 = k + pattern[j];
+                            out[j1] = in[k1];
+                            out[k1] = in[j1];
+                            j1 += m;
+                            k1 += m;
+                            out[j1] = in[k1];
+                            out[k1] = in[j1];
+                        }
+                        k1 = k + pattern[k];
+                        out[k1] = in[k1];
+                        out[k1+m] = in[k1+m];
+                    }
                 }
             }
+
             const std::array<std::complex<T>, N> *in;
             std::array<std::complex<T>, N> *out;
         public:
