@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "benchtest.hpp"
 #include "mixer.hpp"
 
@@ -23,7 +22,7 @@ using namespace std;
 template<typename T>
 class Mixer : public testing::Test {
 protected:
-    
+
     // Starting with a signal at 0Hz, mix then count the
     // number of direction changes and zero crossings.
     void
@@ -43,16 +42,16 @@ protected:
                 dir = 1;
                 ++dir_changes;
             }
-            
+
             if (d.imag() > 0 && prev.imag() <= 0) ++zero_crossings;
             if (d.imag() < 0 && prev.imag() >= 0) ++zero_crossings;
-            
+
             prev = d;
         }
         EXPECT_NEAR(freq*2, dir_changes, 1) << "For rate=" << rate << " and freq=" << freq;
         EXPECT_NEAR(freq*2, zero_crossings, 1) << "For rate=" << rate << " and freq=" << freq;
     }
-    
+
     void
     correctness() {
         check(96000, 0);
@@ -60,7 +59,7 @@ protected:
         check(8000, 1);
         check(8000, 4000);
     }
-    
+
     void
     performance() {
         vector<complex<T>> data(96000, complex<T>(0.5,0.5));
@@ -70,7 +69,7 @@ protected:
             mixer(data);
         }
     }
-    
+
 };
 
 TEST_T(Mixer, double, correctness)
