@@ -31,7 +31,7 @@ DSPP_DEFINE_MATH_CONSTANT(two_pi, 6.283185307179586476925286766559005768e+00)
 // Fast multiply and accumulate. Some platforms can perform this with a single
 // instruction that doesn't lose precision in any intermediate result.
 // Most DSP cases prefer speed over precision which this function ensures.
-// If you prefere speed over precision, explicitly use ::std::fma() instead.
+// If you prefer precision over speed, explicitly use ::std::fma() instead.
 template<typename T1, typename T2, typename T3>
 decltype(T1()+T2()+T3())
 inline fma(T1 x, T2 y, T3 z) {
@@ -41,6 +41,51 @@ inline fma(T1 x, T2 y, T3 z) {
     return x*y+z;
     #endif
 }
+
+// Fmap is a function mapper to wrap filter and window alrogithms.
+template<typename T>
+class Fmap : public std::iterator<std::input_iterator_tag, size_t>
+{
+private:
+    Fmap(Fmap *b, size_t index)
+        : _fn(b->_fn), _size(b->_size), _index(index) {}
+    std::function<T(size_t)> _fn;
+    size_t _size;
+    size_t _index;
+public:
+    Fmap(size_t size, std::function<T(size_t)> &&fn)
+        : _fn(fn), _size(size), _index(0) {}
+    bool operator==(Fmap<T> const & rhs) const {
+        return (_index == rhs._index);
+    }
+    bool operator!=(Fmap<T> const & rhs) const {
+        return !operator==(rhs);
+    }
+    void operator++() {
+        ++_index;
+    }
+    void operator--() {
+        --_index;
+    }
+    T operator*() const {
+        return _fn(_index);
+    }
+    T operator[](size_t const & x) const {
+        return _fn(x);
+    }
+    size_t size() const {
+        return _size;
+    }
+    size_t index() const {
+        return _index;
+    }
+    Fmap begin() {
+        return Fmap(this, 0);
+    }
+    Fmap end() {
+        return Fmap(this, _size);
+    }
+};
 
 } /* namespace dspp */
 
@@ -68,3 +113,4 @@ DSPP_SPECIALIZE_COMPLEX_MULTIPLICATION(double, double)
 } /* namespace std */
 
 #endif /* DSPP_UTIL_HPP */
+
