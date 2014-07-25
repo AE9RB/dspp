@@ -1,15 +1,21 @@
 language: cpp
 compiler:
-  - gcc
   - clang
 before_install:
   - cmake --version
-  - sudo apt-get update -qq
-  - sudo apt-get install -y cmake
-  - cmake --version
+install:
+  - export CXXFLAGS="-std=c++11 -stdlib=libc++"
+  - svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk@201601 libcxx
+  - cd libcxx/lib && bash buildit
+  - sudo cp ./libc++.so.1.0 /usr/lib/
+  - sudo mkdir /usr/include/c++/v1
+  - cd .. && sudo cp -r include/* /usr/include/c++/v1/
+  - cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so
+  - sudo ln -sf libc++.so.1.0 libc++.so.1
+  - cd ~/build/AE9RB/dspp-travis
 before_script:
-  - cmake -DCMAKE_BUILD_TYPE=Release .
-script: make && make test
+  - cmake .
+script: make test_dspp && bin/test_dspp
 branches:
   only:
     - master
