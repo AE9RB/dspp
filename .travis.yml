@@ -9,6 +9,7 @@ before_install:
   - cmake --version
 before_script:
   - cmake -DCMAKE_BUILD_TYPE=Release .
+script: make && make test
 branches:
   only:
     - master
