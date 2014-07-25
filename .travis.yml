@@ -12,7 +12,7 @@ install:
   - cd .. && sudo cp -r include/* /usr/include/c++/v1/
   - cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so
   - sudo ln -sf libc++.so.1.0 libc++.so.1
-  - cd ~/build/AE9RB/dspp-travis
+  - cd ~/build/AE9RB/dspp
 before_script:
   - cmake .
 script: make test_dspp && bin/test_dspp
