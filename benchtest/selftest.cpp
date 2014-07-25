@@ -15,15 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "benchtest.hpp"
+#include <exception>
+#include <stdexcept>
 
 // Self-test for benchtest.
-// There is no Makefile. Simply run this self-test like so:
-// g++ -Wall -o selftest -std=c++11 -O3 selftest.cpp && ./selftest
 // Since failures must be tested, it is normal see them in the report.
-// Message to STDERR and exit code are used to determine sucess.
 
 #define SELFTEST_ABORT \
-{std::cerr << std::endl << "ERROR: self-test failed.\n"; abort();}
+{std::cout << std::endl << "ERROR: self-test failed.\n"; abort();}
 
 #define SELFTEST_BASE1 \
 do { \
@@ -61,7 +60,8 @@ int main() {
     testing::reporter(new testing::DefaultReporter);
     auto result = testing::Runner::RunAll();
     if (result == EXIT_SUCCESS) SELFTEST_ABORT;
-    std::cerr << std::endl << "Self-test was successful." << std::endl;
+    std::cout << std::endl << "Self-test was successful." << std::endl;
+    std::cout << "Failure reports are normal (to test failure cases)." << std::endl;
     return 0; // Clean exit code if no problems.
 }
 

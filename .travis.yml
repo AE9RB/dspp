@@ -5,22 +5,18 @@ compiler:
 before_install:
   - cmake --version
   - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
-  - sudo apt-get update -qq
+  - if [ "$CXX" == "g++" ]; then sudo apt-get update -qq; fi
 install:
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-  - if [ "$CXX" == "clang++" ]; then export CXXFLAGS="-std=c++11 -stdlib=libc++"; fi
-  - if [ "$CXX" == "clang++" ]; then svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk@201601 libcxx; fi
-  - if [ "$CXX" == "clang++" ]; then cd libcxx/lib && bash buildit; fi
-  - if [ "$CXX" == "clang++" ]; then sudo cp ./libc++.so.1.0 /usr/lib/; fi
-  - if [ "$CXX" == "clang++" ]; then sudo mkdir /usr/include/c++/v1; fi
-  - if [ "$CXX" == "clang++" ]; then cd .. && sudo cp -r include/* /usr/include/c++/v1/; fi
-  - if [ "$CXX" == "clang++" ]; then cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so; fi
-  - if [ "$CXX" == "clang++" ]; then sudo ln -sf libc++.so.1.0 libc++.so.1; fi
-  - if [ "$CXX" == "clang++" ]; then cd ~/build/AE9RB/dspp; fi
 before_script:
-  - cmake .
-script: make test_dspp && bin/test_dspp
+  - if [ "$CXX" == "g++-4.8" ]; then cmake -DCMAKE_BUILD_TYPE=Release .; fi
+  # travis-ci clang is missing gold plugin so build without optimizer
+  - if [ "$CXX" == "clang++" ]; then cmake .; fi
+script:
+  - make all && CTEST_OUTPUT_ON_FAILURE=TRUE ctest
+after_script:
+  - cat Testing/Temporary/LastTest.log
 branches:
   only:
     - master
