@@ -2,6 +2,11 @@ language: cpp
 compiler:
   - gcc
   - clang
+before_install:
+  - cmake --version
+  - sudo apt-get update -qq
+  - sudo apt-get install -y cmake
+  - cmake --version
 before_script:
   - cmake -DCMAKE_BUILD_TYPE=Release .
 script: rake
