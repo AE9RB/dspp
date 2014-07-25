@@ -36,5 +36,5 @@ add_test(NAME run_test_benchtest COMMAND test_benchtest)
 
 file(GLOB_RECURSE TEST_DSPP_SRC "test/*.cpp")
 add_executable(test_dspp ${TEST_DSPP_SRC} ${DSPP_HEADERS})
-target_include_directories(test_dspp PRIVATE include benchtest)
+include_directories(include benchtest)
 add_test(NAME run_test_dspp COMMAND test_dspp)
