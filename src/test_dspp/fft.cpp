@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "benchtest.hpp"
-#include "fft.hpp"
+#include "dspp/fft.hpp"
 
 const std::array<std::complex<double>, 16> ref0 {{
         std::complex<double>(-0.82993510256513270,0.78322255460971535),

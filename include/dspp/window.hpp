@@ -24,7 +24,7 @@ namespace dspp {
 namespace window {
 
 /// \f[
-/// w(n) = 1.
+/// w(n)=1
 /// \f]
 template<typename T>
 Fmap<T>
@@ -35,12 +35,13 @@ rect(size_t size, bool symm = true) {
 }
 
 /// \f[
-/// w(n)=1 - \left|\frac{n-\frac{N-1}{2}}{\frac{N+1}{2}}\right|
-/// \f]
-/// Even symmetric windows:
-/// \f[
 /// w(n)=1 - \left|\frac{n-\frac{N-1}{2}}{\frac{N}{2}}\right|
 /// \f]
+/// <center>(a) Even symmetric</center>
+/// \f[
+/// w(n)=1 - \left|\frac{n-\frac{N-1}{2}}{\frac{N+1}{2}}\right|
+/// \f]
+/// <center>(b) Others</center>
 template<typename T>
 Fmap<T>
 triang(size_t size, bool symm = true) {

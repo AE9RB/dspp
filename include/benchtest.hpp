@@ -38,12 +38,12 @@ namespace testing {
 
 }
 
-#include "info.hpp"
-#include "printer.hpp"
-#include "reporter.hpp"
-#include "asserter.hpp"
-#include "test.hpp"
-#include "runner.hpp"
+#include "benchtest/info.hpp"
+#include "benchtest/printer.hpp"
+#include "benchtest/reporter.hpp"
+#include "benchtest/asserter.hpp"
+#include "benchtest/test.hpp"
+#include "benchtest/runner.hpp"
 
 
 #define BENCHTEST_CLASS_NAME_(test_case_name, test_name, type_name) \

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "benchtest.hpp"
-#include "window.hpp"
+#include "dspp/window.hpp"
 
 using namespace dspp;
 using namespace std;
