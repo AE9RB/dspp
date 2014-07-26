@@ -22,19 +22,24 @@ endif()
 
 ### set up header groups for xcode and visual studio
 
-file(GLOB_RECURSE DSPP_HEADERS "include/*.hpp")
-file(GLOB_RECURSE BENCHTEST_HEADERS "benchtest/*.hpp")
-source_group("dspp" FILES ${DSPP_HEADERS})
-source_group("benchtest" FILES ${BENCHTEST_HEADERS})
+file(GLOB_RECURSE INCLUDE_DSPP "include/dspp/*.hpp")
+source_group("Header Files\\dspp" FILES ${INCLUDE_DSPP})
+LIST(APPEND INCLUDE_DSPP "include/dspp.hpp")
+
+file(GLOB_RECURSE INCLUDE_BENCHTEST "include/benchtest/*.hpp")
+source_group("Header Files\\benchtest" FILES ${INCLUDE_BENCHTEST})
+LIST(APPEND INCLUDE_BENCHTEST "include/benchtest.hpp")
+
+include_directories(include)
 
 ### selftest benchtest
 
-add_executable(test_benchtest "benchtest/selftest.cpp" ${BENCHTEST_HEADERS})
+file(GLOB_RECURSE SRC_TEST_BENCHTEST "src/test_benchtest/*.cpp")
+add_executable(test_benchtest ${SRC_TEST_BENCHTEST} ${INCLUDE_BENCHTEST})
 add_test(NAME run_test_benchtest COMMAND test_benchtest)
 
 ### selftest dspp
 
-file(GLOB_RECURSE TEST_DSPP_SRC "test/*.cpp")
-add_executable(test_dspp ${TEST_DSPP_SRC} ${DSPP_HEADERS})
-include_directories(include benchtest)
+file(GLOB_RECURSE SRC_TEST_DSPP "src/test_dspp/*.cpp")
+add_executable(test_dspp ${SRC_TEST_DSPP} ${INCLUDE_DSPP} ${INCLUDE_BENCHTEST})
 add_test(NAME run_test_dspp COMMAND test_dspp)
