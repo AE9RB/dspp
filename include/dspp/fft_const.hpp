@@ -1,4 +1,4 @@
-// # dspp - Digital signal processing for C++
+// # dspp - Digital Signal Processing library for C++
 // # Copyright (C) 2014 David Turnbull
 // #
 // # This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 // out.puts
 // out.puts "#ifndef dspp_fft_const_hpp"
 // out.puts "#define dspp_fft_const_hpp"
+// out.puts "/// @cond ALWAYS_EXCLUDE_FROM_DOXYGEN"
 // out.puts
 // out.puts "namespace dspp {"
 // out.puts "    namespace FFT {"
@@ -48,6 +49,7 @@
 // end
 // out.puts "    }"
 // out.puts "}"
+// out.puts "/// @endcond"
 // out.puts "#endif"
 // out.close
 // __END__
@@ -69,6 +71,7 @@
 
 #ifndef dspp_fft_const_hpp
 #define dspp_fft_const_hpp
+/// @cond ALWAYS_EXCLUDE_FROM_DOXYGEN
 
 namespace dspp {
     namespace FFT {
@@ -6402,4 +6405,5 @@ namespace dspp {
         }};
     }
 }
+/// @endcond
 #endif

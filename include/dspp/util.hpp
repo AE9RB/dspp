@@ -1,4 +1,4 @@
-// dspp - Digital signal processing for C++
+// dspp - Digital Signal Processing library for C++
 // Copyright (C) 2014 David Turnbull
 //
 // This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ inline fma(T1 x, T2 y, T3 z) {
     #endif
 }
 
-// Fmap is a function mapper to wrap filter and window alrogithms.
+/// Function mapper to wrap filter and window algorithms.
 template<typename T>
 class Fmap : public std::iterator<std::input_iterator_tag, size_t>
 {

@@ -1,4 +1,4 @@
-// dspp - Digital signal processing for C++
+// dspp - Digital Signal Processing library for C++
 // Copyright (C) 2014 David Turnbull
 //
 // This program is free software: you can redistribute it and/or modify

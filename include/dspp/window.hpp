@@ -1,4 +1,4 @@
-// dspp - Digital signal processing for C++
+// dspp - Digital Signal Processing library for C++
 // Copyright (C) 2014 David Turnbull
 //
 // This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,38 @@
 #include "util.hpp"
 
 namespace dspp {
+/// @brief Window functions (also known as an apodization functions or
+///        tapering functions).
+///
+/// A [window function](http://en.wikipedia.org/wiki/Window_function)
+/// is a mathematical function that is zero-valued outside
+/// of an interval. Typical applications include the design of
+/// [finite impulse response (FIR) filters](http://en.wikipedia.org/wiki/Fir_filter)
+/// and controlling [spectral leakage](http://en.wikipedia.org/wiki/Spectral_leakage)
+/// in [Fourier analysis](http://en.wikipedia.org/wiki/Fourier_analysis).
+/// When a discrete-time series is multiplied against the coefficients of
+/// a window function everything outside the interval is zero-valued.
+/// This gives the appearance of "looking through a window".
+///
+/// N represents the number of samples in a discrete-time window function
+/// \f$w(n),\space 0 \le n \le N-1\f$. When N is an odd number, non-flat windows
+/// have a singular maximum point. When N is even, they have a double maximum.
+///
+/// For spectral analysis, window functions are often required to be an even
+/// length but still need a single maximum value. This is accomplished by
+/// deleting the right-most coefficient. The dspp window functions can do this
+/// automatically when the \p symm parameter is false. For example, a window of
+/// \p size 1024 with \p symm false will be computed as if N is 1025.
+///
+/// <h2 class="groupheader"> Function Prototype</h2>
+/// <tt>#include <@ref dspp/window.hpp></tt>
+///
+/// All window functions have the same prototype.
+/// @tparam T Numeric type of generated points, e.g., float or double.
+/// @retval Fmap<T> An object you can iterate over or randomly access.
+/// @param size Number of samples to generate.
+/// @param symm True generates a symmetric window for filter design.<br>
+///             False generates a periodic window for spectral analysis.
 namespace window {
 
 /// \f[
@@ -34,14 +66,16 @@ rect(size_t size, bool symm = true) {
     });
 }
 
+/// @headerfile "include/dspp/fft.hpp"
 /// \f[
-/// w(n)=1 - \left|\frac{n-\frac{N-1}{2}}{\frac{N}{2}}\right|
+/// w(n)=1-\begin{cases}
+/// \left|\frac{n-\frac{N-1}{2}}{\frac{N}{2}}\right|
+/// & \text{if $N$ is even} \\
+/// \left|\frac{n-\frac{N-1}{2}}{\frac{N+1}{2}}\right|
+/// & \text{if $N$ is odd}
+/// \end{cases}
+/// \qquad 0 \leq n \leq N-1
 /// \f]
-/// <center>(a) Even symmetric</center>
-/// \f[
-/// w(n)=1 - \left|\frac{n-\frac{N-1}{2}}{\frac{N+1}{2}}\right|
-/// \f]
-/// <center>(b) Others</center>
 template<typename T>
 Fmap<T>
 triang(size_t size, bool symm = true) {
@@ -57,9 +91,8 @@ triang(size_t size, bool symm = true) {
 }
 
 /// \f[
-/// w(n) = \frac{2}{N-1} \left(
-///        \frac{N-1}{2} - \left|n - \frac{N-1}{2}\right|
-///        \right)
+/// w(n) = 1- \left|\frac{n-\frac{N-1}{2}}{\frac{N-1}{2}}\right|
+///        \qquad 0 \leq n \leq N-1
 /// \f]
 template<typename T>
 Fmap<T>
@@ -92,6 +125,7 @@ hann(size_t size, bool symm = true) {
 
 /// \f[
 /// w(n)=1 - \left(\frac{n-\frac{N-1}{2}}{\frac{N+1}{2}}\right)^2
+///          \qquad 0 \leq n \leq N-1
 /// \f]
 template<typename T>
 Fmap<T>
@@ -106,6 +140,15 @@ welch(size_t size, bool symm = true) {
     });
 }
 
+/// \f[
+/// w(n)=\begin{cases}
+/// 1 - 6\left(\frac{|n|}{N/2}\right)^2 + 6\left(\frac{|n|}{N/2}\right)^3
+/// & 0 \leq |n| \leq (N-1)/4
+/// \\ 2\left(1-\frac{|n|}{N/2}\right)^3
+/// & (N-1)/4 \lt |n| \le (N-1)/2
+/// \end{cases}
+/// \qquad -\frac{N-1}{2} \leq n \leq \frac{N-1}{2}
+/// \f]
 template<typename T>
 Fmap<T>
 parzen(size_t size, bool symm = true) {

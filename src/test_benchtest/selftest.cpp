@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "benchtest.hpp"
+#include <benchtest.hpp>
 #include <exception>
 #include <stdexcept>
 
@@ -82,7 +82,6 @@ void no_fatal(bool assert_true) {
     ASSERT_TRUE(assert_true);
 }
 
-#include <cmath>
 TEST(Control, NoFatalFailure) {
     SELFTEST_SUCCESS(
         ASSERT_NO_FATAL_FAILURE(no_fatal(true));

@@ -1,4 +1,4 @@
-// dspp - Digital signal processing for C++
+// dspp - Digital Signal Processing library for C++
 // Copyright (C) 2014 David Turnbull
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "benchtest.hpp"
-#include "dspp/fft.hpp"
+#include <benchtest.hpp>
+#include <dspp/fft.hpp>
 
 const std::array<std::complex<double>, 16> ref0 {{
         std::complex<double>(-0.82993510256513270,0.78322255460971535),

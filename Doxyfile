@@ -1,0 +1,44 @@
+# Doxyfile - Configuration for Doxygen
+# Implementation details are not published by default.
+# ENABLED_SECTIONS      += DSPP_IMPL
+# ENABLED_SECTIONS      += BENCHTEST_IMPL
+
+DOXYFILE_ENCODING      = UTF-8
+INPUT_ENCODING         = UTF-8
+PROJECT_NAME           = "dspp"
+PROJECT_BRIEF          = "Digital Signal Processing library for C++"
+OUTPUT_LANGUAGE        = English
+TAB_SIZE               = 4
+INPUT                  = include/dspp doc LICENSE.txt
+STRIP_FROM_PATH        = include
+STRIP_FROM_INC_PATH    = include
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = mainpage.md
+EXAMPLE_PATH           = doc
+USE_MATHJAX            = YES
+MATHJAX_CODEFILE       = doc/mathjax.js
+MATHJAX_RELPATH        = http://cdn.mathjax.org/mathjax/latest
+CITE_BIB_FILES         = doc/cite.bib
+GENERATE_LATEX         = NO
+EXTRA_PACKAGES         = amsmath
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_COLORSTYLE_HUE    = 36
+HTML_COLORSTYLE_SAT    = 80
+HTML_COLORSTYLE_GAMMA  = 100
+HTML_TIMESTAMP         = NO
+HAVE_DOT               = YES
+SHOW_FILES             = NO
+SHOW_USED_FILES        = NO
+SOURCE_BROWSER         = NO
+VERBATIM_HEADERS       = NO
+BUILTIN_STL_SUPPORT    = YES
+CLASS_DIAGRAMS         = NO
+CLASS_GRAPH            = NO
+COLLABORATION_GRAPH    = YES
+SORT_MEMBER_DOCS       = NO
+SORT_BY_SCOPE_NAME     = YES
+GENERATE_TREEVIEW      = YES
+TREEVIEW_WIDTH         = 250
+CASE_SENSE_NAMES       = NO
+ALPHABETICAL_INDEX     = NO

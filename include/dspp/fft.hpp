@@ -1,4 +1,4 @@
-// dspp - Digital signal processing for C++
+// dspp - Digital Signal Processing library for C++
 // Copyright (C) 2014 David Turnbull
 //
 // This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,36 @@
 #include "util.hpp"
 
 namespace dspp {
+/// \brief Fast Fourier Transforms
+///
+/// \f[
+/// X_k =  \sum_{n=0}^{N-1} x_n e^{-{i 2\pi k \frac{n}{N}}}
+/// \qquad k = 0,\dots,N-1
+/// \f]
+///
+/// Performs a discrete Fourier transform on arrays with power-of-two sizes.
+/// Uses a radix-4 decimation in time algorithm with a time complexity of
+/// approximately \f$ \Theta(3/8N \log_2 (N)) \f$.
+/// Unlike most other %FFT implementations, no planning step is necessary.
+///
+/// Example usage:
+///
+///     std::array<std::complex<float>,512> data;
+///     FFT::dft(data);
+///
+/// C-style arrays are supported:
+///
+///     std::complex<float> data[512];
+///     FFT::dft(data);
+///
+/// Out-of-place transform:
+///
+///     std::array<std::complex<double>,64> in;
+///     std::array<std::complex<double>,64> out;
+///     FFT::dft(in, out);
+///
 namespace FFT {
+/// @cond DSPP_IMPL
 
 // Twiddle factors
 template<typename T, int D, size_t N>
@@ -276,6 +305,8 @@ public:
         Butterfly<T, 1, N>::dit(&out[0]);
     }
 };
+
+/// @endcond /* DSPP_IMPL */
 
 /// Discrete Fourier transform.
 template<typename T, size_t N>
