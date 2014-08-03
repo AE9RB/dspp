@@ -19,8 +19,8 @@ Give it a try:
 
 A testing framework is part of the dspp library and all commits are
 verified with a continuous integration server. You can also use this
-testing framework for your own applications, if you so desire. The testing
-framework includes a microbenchmarking tool. This makes it difficult to
+framework for testing your own applications, if you so desire. The testing
+framework includes a benchmarking tool. This makes it difficult to
 accidentally regress performance and easy to test different implementations.
 You can be confident that performance is suitable for real-time applications
 like Software Defined Radio.
@@ -28,12 +28,13 @@ like Software Defined Radio.
 ## Installation
 
  1. Download or clone from GitHub. <https://github.com/AE9RB/dspp>
- 2. Add the include directory to your compiler include path.
- 3. #include <dspp.hpp>
+ 2. Add the \c include directory to your compiler include path.
+ 3. \#include <dspp.hpp>
  
 The dspp library is a collection of headers like the Standard Template
 Library. There's nothing to compile except your own application.
-There are no dependencies to install.
+There are no dependencies to install. The only thing you need to bring
+to the party is a C++11 compiler.
 
 ## Contribute
 

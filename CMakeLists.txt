@@ -43,3 +43,13 @@ add_test(NAME run_test_benchtest COMMAND test_benchtest)
 file(GLOB_RECURSE SRC_TEST_DSPP "src/test_dspp/*.cpp")
 add_executable(test_dspp ${SRC_TEST_DSPP} ${INCLUDE_DSPP} ${INCLUDE_BENCHTEST})
 add_test(NAME run_test_dspp COMMAND test_dspp)
+
+### documentation
+
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+add_custom_target(doc
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Doxyfile
+    COMMENT "Generating API documentation with Doxygen" VERBATIM
+)
+endif(DOXYGEN_FOUND)

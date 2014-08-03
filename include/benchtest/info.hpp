@@ -16,6 +16,10 @@
 
 namespace testing {
     
+    /// @class Info benchtest.hpp
+    /// @brief Information about current test for the Reporter.
+    /// @details An instance of this will automatically be attached to
+    /// the Reporter. It is used to obtain strings for the report output.
     class Info {
         friend class Runner;
         const char* case_name;
@@ -23,6 +27,7 @@ namespace testing {
         const char* type_name;
         virtual class Test* CreateFixture() = 0;
     protected:
+        /// @cond BENCHTEST_IMPL
         Info(const char* case_name, const char* test_name, const char* type_name) :
         case_name(case_name),
         test_name(test_name),
@@ -36,7 +41,18 @@ namespace testing {
         virtual void TearDownTestCase() = 0;
         int fatal_failure_count = 0;
         int nonfatal_failure_count = 0;
-        
+        bool HasFatalFailure() {
+            return fatal_failure_count;
+        }
+        bool HasNonfatalFailure() {
+            return nonfatal_failure_count;
+        }
+        bool HasFailure() {
+            return HasFatalFailure() || HasNonfatalFailure();
+        }
+        /// @endcond
+
+        /// Name of the test case including template type.
         ::std::string test_case_name() const {
             auto n = ::std::string(case_name);
             if (type_name) {
@@ -46,22 +62,13 @@ namespace testing {
             }
             return n;
         }
-        
+
+        /// Full name of the test, i.e., case_name + type_name + test_name.
         ::std::string name() const {
             auto n = test_case_name();
             n += ".";
             n += test_name;
             return n;
-        }
-        
-        bool HasFatalFailure() {
-            return fatal_failure_count;
-        }
-        bool HasNonfatalFailure() {
-            return nonfatal_failure_count;
-        }
-        bool HasFailure() {
-            return HasFatalFailure() || HasNonfatalFailure();
         }
         
     };

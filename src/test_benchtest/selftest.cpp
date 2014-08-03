@@ -58,7 +58,7 @@ SELFTEST_BASE1 expr SELFTEST_BASE2(false, 0)
 
 int main() {
     testing::reporter(new testing::DefaultReporter);
-    auto result = testing::Runner::RunAll();
+    auto result = testing::run();
     if (result == EXIT_SUCCESS) SELFTEST_ABORT;
     std::cout << std::endl << "Self-test was successful." << std::endl;
     std::cout << "Failure reports are normal (to test failure cases)." << std::endl;

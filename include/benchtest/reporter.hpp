@@ -18,35 +18,61 @@ namespace testing {
 
     //TODO enable argv check for xcode in Error()
 
+    /// @class Reporter benchtest.hpp
+    /// @brief Abstract class for building custom reporters.
+    /// @details A custom reporter might be desired for XML or JSON output
+    /// to be parsed by another tool. You may also build a custom reporter
+    /// by inheriting DefaultReporter if you just want a few adjustments.
     class Reporter {
     public:
+        /// An instance of Info for the current test is put here
+        /// automatically by the framework.
         class Info* test_info;
+        /// Start is called before any tests are run.
         virtual void Start(size_t cases, size_t total_qty) = 0;
+        /// End is called after all tests are run.
         virtual void End(long ms) = 0;
+        /// StartCase is called before any tests in a case are run.
         virtual void StartCase(size_t case_qty) = 0;
+        /// EndCase is called after all tests in a case are finished.
         virtual void EndCase(long ms) = 0;
+        /// Run is called once before each test.
         virtual void Run() = 0;
+        /// Pass is called at the end of a test that didn't report failures.
         virtual void Pass(long ms) = 0;
+        /// Fail is called at the end of a test that failed.
         virtual void Fail(long ms) = 0;
+        /// Bench is called during test to report a benchmark time.
         virtual void Bench(long iterations, double us) = 0;
+        /// Print is called with miscellaneous annotations for a human-readable report.
         virtual void Print(::std::string message) = 0;
+        /// Trace is called to print each line in a scoped trace.
         virtual void Trace(::std::string message, const char* file, long line) = 0;
+        /// Error is called for each failure during a test.
         virtual void Error(::std::string message, const char* file, long line) = 0;
     };
 
-
+    /// @class DefaultReporter benchtest.hpp
+    /// @brief Reporter class that outputs a human readable format.
     class DefaultReporter : public Reporter {
     public:
+        /// Creates an instance which can optionally report somewhere other than STDOUT.
         DefaultReporter(::std::ostream& ostream = ::std::cout) {
             this->ostream = &ostream;
         }
     protected:
+        /// The ostream this instance was initialized to.
         ::std::ostream* ostream;
+        /// Remember the number of cases passed to Start().
         size_t cases;
+        /// Remember the total_qty of tests passed to Start().
         size_t total_qty;
+        /// Remember the number of tests for the current test case.
         size_t case_qty;
+        /// Remember the name of every failed test for the final report.
         ::std::vector<::std::string> failures;
 
+        /// Utility for adding "s", e.g., "case" becomes "cases" when not qty 1.
         virtual ::std::string Pluralize(size_t qty, const char* label = nullptr) {
             auto str = ::std::to_string(qty);
             str += " ";

@@ -45,7 +45,7 @@ namespace dspp {
 /// \p size 1024 with \p symm false will be computed as if N is 1025.
 ///
 /// <h2 class="groupheader"> Function Prototype</h2>
-/// <tt>#include <@ref dspp/window.hpp></tt>
+/// <tt>\#include <dspp/window.hpp></tt>
 ///
 /// All window functions have the same prototype.
 /// @tparam T Numeric type of generated points, e.g., float or double.
@@ -58,7 +58,7 @@ namespace window {
 /// \f[
 /// w(n)=1
 /// \f]
-template<typename T>
+template<typename T = double>
 Fmap<T>
 rect(size_t size, bool symm = true) {
     return Fmap<T>(size, [](size_t index)->T {
@@ -76,7 +76,7 @@ rect(size_t size, bool symm = true) {
 /// \end{cases}
 /// \qquad 0 \leq n \leq N-1
 /// \f]
-template<typename T>
+template<typename T = double>
 Fmap<T>
 triang(size_t size, bool symm = true) {
     T len = size;
@@ -94,7 +94,7 @@ triang(size_t size, bool symm = true) {
 /// w(n) = 1- \left|\frac{n-\frac{N-1}{2}}{\frac{N-1}{2}}\right|
 ///        \qquad 0 \leq n \leq N-1
 /// \f]
-template<typename T>
+template<typename T = double>
 Fmap<T>
 bartlett(size_t size, bool symm = true) {
     if (size==1) return rect<T>(1);
@@ -111,7 +111,7 @@ bartlett(size_t size, bool symm = true) {
 /// w(n) = 0.5 - 0.5 \cos\left(\frac{2\pi{n}}{N-1}\right)
 ///        \qquad 0 \leq n \leq N-1
 /// \f]
-template<typename T>
+template<typename T = double>
 Fmap<T>
 hann(size_t size, bool symm = true) {
     if (size==1) return rect<T>(1);
@@ -127,7 +127,7 @@ hann(size_t size, bool symm = true) {
 /// w(n)=1 - \left(\frac{n-\frac{N-1}{2}}{\frac{N+1}{2}}\right)^2
 ///          \qquad 0 \leq n \leq N-1
 /// \f]
-template<typename T>
+template<typename T = double>
 Fmap<T>
 welch(size_t size, bool symm = true) {
     T len = size;
@@ -149,7 +149,7 @@ welch(size_t size, bool symm = true) {
 /// \end{cases}
 /// \qquad -\frac{N-1}{2} \leq n \leq \frac{N-1}{2}
 /// \f]
-template<typename T>
+template<typename T = double>
 Fmap<T>
 parzen(size_t size, bool symm = true) {
     T len = size;

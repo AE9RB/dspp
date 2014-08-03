@@ -18,5 +18,5 @@
 
 int main() {
     testing::reporter(new testing::DefaultReporter);
-    return testing::Runner::RunAll();
+    return testing::run();
 }

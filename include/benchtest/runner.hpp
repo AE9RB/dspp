@@ -19,6 +19,8 @@ namespace testing {
     //TODO validate all cases really use same fixture
     //TODO add argv options
     
+    /// @cond BENCHTEST_IMPL
+
     class Runner {
         
         template <typename T>
@@ -38,9 +40,6 @@ namespace testing {
             testers()[tester->test_case_name()].push_back(tester);
         }
 
-#if defined(__GNUC__) && !defined(COMPILER_ICC)
-        __attribute__ ((warn_unused_result))
-#endif
         static int RunAll()
         {
             auto total_start = ::std::chrono::high_resolution_clock::now();
@@ -112,5 +111,5 @@ namespace testing {
         }
     };
 
-    
+    /// @endcond
 }

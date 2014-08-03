@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+/// @cond BENCHTEST_IMPL
 namespace testing {
-
     class AssertionResult {
     private:
         bool success;
@@ -55,16 +55,38 @@ namespace testing {
             return success;
         }
     };
+/// @endcond
 
-    inline AssertionResult AssertionSuccess() {
-        return AssertionResult(true);
-    }
-
+    /// @ingroup benchtest_assert
+    /// @brief Constructs a failure message that implicitly converts to bool.
+    /// @details
+    /// If you build a function that returns true or false to indicate
+    /// passing or failing status, you can instead return AssertionFailure()
+    /// or AssertionSuccess() with additional information.
+    /// ~~~
+    /// testing::AssertionResult IsEven(int n) {
+    ///     if ((n % 2) == 0)
+    ///         return ::testing::AssertionSuccess() << n << " is even";
+    ///     else
+    ///         return ::testing::AssertionFailure() << n << " is odd";
+    /// }
+    ///
+    /// TEST(Numbers, IsEven){
+    ///     EXPECT_TRUE(IsEven(4));
+    ///     EXPECT_FALSE(IsEven(5));
+    /// }
+    /// ~~~
     inline AssertionResult AssertionFailure() {
         return AssertionResult(false);
     }
 
+    /// @ingroup benchtest_assert
+    /// @brief Opposite of AssertionFailure().
+    inline AssertionResult AssertionSuccess() {
+        return AssertionResult(true);
+    }
 
+/// @cond BENCHTEST_IMPL
     class ScopeTracer {
         struct TraceInfo {
             ::std::ostringstream message;
@@ -245,8 +267,7 @@ namespace testing {
             return ResultEq(e1, e2, PrintToString(v1), PrintToString(v2));
         }
 
-        // Floating points are considered equal when they are within 4 ULPS at 1.0.
-        // DSP values should range from -1..1 so this works well here.
+        // Specialization for floating point equality.
         template<typename T>
         AssertionResult EQ(const char* e1, const char* e2, T v1, T v2,
                            typename ::std::enable_if<::std::is_floating_point<T>::value >::type* = 0) {
@@ -258,6 +279,7 @@ namespace testing {
             return ResultEq(e1, e2, vs1.str(), vs2.str());
         }
 
+        // Specialization for complex floating point equality.
         template<typename T>
         AssertionResult EQ(const char* e1, const char* e2, ::std::complex<T> v1, ::std::complex<T> v2,
                            typename ::std::enable_if<::std::is_floating_point<T>::value >::type* = 0) {
@@ -289,7 +311,7 @@ namespace testing {
 
     }
 }
-
+/// @endcond
 
 #define BENCHTEST_AMBIGUOUS_ELSE_BLOCKER_ switch (0) case 0: default:
 
@@ -308,6 +330,234 @@ BENCHTEST_AMBIGUOUS_ELSE_BLOCKER_ if (auto bt_result_ =
 #define BENCHTEST_TOKEN_(a, b) BENCHTEST_TOKEN_CONCAT_(a, b)
 #define BENCHTEST_TOKEN_CONCAT_(a, b) a ## b
 
+/// @ingroup benchtest_assert
+/// @hideinitializer @def FAIL
+/// @brief Unconditionally fail the current test fatally.
+#define FAIL() \
+BENCHTEST_ASSERT_ \
+::testing::AssertionFailure() \
+BENCHTEST_RESULT_FATAL_
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def ADD_FAILURE
+/// @brief Unconditionally add a failure.
+#define ADD_FAILURE() \
+BENCHTEST_ASSERT_ \
+::testing::AssertionFailure() \
+BENCHTEST_RESULT_NONFATAL_
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def ADD_FAILURE_AT
+/// @brief Unconditionally add a failure with custom filename and line number.
+#define ADD_FAILURE_AT(file, line) \
+BENCHTEST_ASSERT_ \
+::testing::AssertionFailure() \
+);else BENCHTEST_RESULT_REPORTER_(file, line, false)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def SCOPED_TRACE
+/// @brief Add scope information to failure reports.
+/// @details Your tests may be implemented in a way that makes it
+/// difficult to determine where a failure has occurred. For example,
+/// you may be calling a subroutine multiple times in the same test.
+/// Using SCOPED_TRACE is a fast way to add helpful information.
+/// ~~~
+/// TEST(ThisThat, OtherThing) {
+///     {
+///         SCOPED_TRACE() << "Check 1";  // The message "Check 1" will appear
+///         check(1);                     // on failures in this scope.
+///     }
+///     // Leaving scope, no more extra message.
+///     check(2);
+/// }
+/// ~~~
+#define SCOPED_TRACE() \
+auto BENCHTEST_TOKEN_(benchtest_tracer_, __LINE__) = ::testing::ScopeTracer(__FILE__, __LINE__)
+
+#define EXPECT_PRED1(pred, v1) \
+BENCHTEST_ASSERT_ \
+::testing::assert::PRED(#pred, #v1, pred, v1) \
+BENCHTEST_RESULT_NONFATAL_
+#define ASSERT_PRED1(pred, v1) \
+BENCHTEST_ASSERT_ \
+::testing::assert::PRED(#pred, #v1, pred, v1) \
+BENCHTEST_RESULT_FATAL_
+#define EXPECT_PRED_FORMAT1(pred_format, v1) \
+BENCHTEST_ASSERT_ \
+pred_format(#v1, v1) \
+BENCHTEST_RESULT_NONFATAL_
+#define ASSERT_PRED_FORMAT1(pred_format, v1) \
+BENCHTEST_ASSERT_ \
+pred_format(#v1, v1) \
+BENCHTEST_RESULT_FATAL_
+
+#define EXPECT_PRED2(pred, v1, v2) \
+BENCHTEST_ASSERT_ \
+::testing::assert::PRED(#pred, #v1, #v2, pred, v1, v2) \
+BENCHTEST_RESULT_NONFATAL_
+#define ASSERT_PRED2(pred, v1, v2) \
+BENCHTEST_ASSERT_ \
+::testing::assert::PRED(#pred, #v1, #v2, pred, v1, v2) \
+BENCHTEST_RESULT_FATAL_
+#define EXPECT_PRED_FORMAT2(pred_format, v1, v2) \
+BENCHTEST_ASSERT_ \
+pred_format(#v1, #v2, v1, v2) \
+BENCHTEST_RESULT_NONFATAL_
+#define ASSERT_PRED_FORMAT2(pred_format, v1, v2) \
+BENCHTEST_ASSERT_ \
+pred_format(#v1, #v2, v1, v2) \
+BENCHTEST_RESULT_FATAL_
+
+#define EXPECT_PRED3(pred, v1, v2, v3) \
+BENCHTEST_ASSERT_ \
+::testing::assert::PRED(#pred, #v1, #v2, #v3, pred, v1, v2, v3) \
+BENCHTEST_RESULT_NONFATAL_
+#define ASSERT_PRED3(pred, v1, v2, v3) \
+BENCHTEST_ASSERT_ \
+::testing::assert::PRED(#pred, #v1, #v2, #v3, pred, v1, v2, v3) \
+BENCHTEST_RESULT_FATAL_
+#define EXPECT_PRED_FORMAT3(pred_format, v1, v2, v3) \
+BENCHTEST_ASSERT_ \
+pred_format(#v1, #v2, #v3, v1, v2, v3) \
+BENCHTEST_RESULT_NONFATAL_
+#define ASSERT_PRED_FORMAT3(pred_format, v1, v2, v3) \
+BENCHTEST_ASSERT_ \
+pred_format(#v1, #v2, #v3, v1, v2, v3) \
+BENCHTEST_RESULT_FATAL_
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_TRUE
+/// @brief Condition evaluates to true.
+#define EXPECT_TRUE(condition) \
+EXPECT_PRED_FORMAT2(::testing::assert::EQ, true, condition)
+#define ASSERT_TRUE(condition) \
+ASSERT_PRED_FORMAT2(::testing::assert::EQ, true, condition)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_FALSE
+/// @brief Condition evaluates to false.
+#define EXPECT_FALSE(condition) \
+EXPECT_PRED_FORMAT2(::testing::assert::EQ, false, condition)
+#define ASSERT_FALSE(condition) \
+ASSERT_PRED_FORMAT2(::testing::assert::EQ, false, condition)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_NEAR
+/// @brief Distance between val1 and val2 is less than or equal to abs_error.
+#define EXPECT_NEAR(val1, val2, abs_error) \
+EXPECT_PRED_FORMAT3(::testing::assert::NEAR, val1, val2, abs_error)
+#define ASSERT_NEAR(val1, val2, abs_error) \
+ASSERT_PRED_FORMAT3(::testing::assert::NEAR, val1, val2, abs_error)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_EQ
+/// @brief Equality. (val1 == val2)
+/// @details
+/// A special case is triggered when both values are the same type
+/// of floating point.  In this case the values are equal if they are
+/// within 4 [ULPs] (http://en.wikipedia.org/wiki/Unit_in_the_last_place) (at 1.0).
+/// Complex numbers of the same floating point type are also compared this way.
+/// This is ideal for DSP values which typically range from -1...1. Consider using
+/// \ref EXPECT_NEAR if you are working with significantly smaller or larger numbers.
+#define EXPECT_EQ(val1, val2) \
+EXPECT_PRED_FORMAT2(::testing::assert::EQ, val1, val2)
+#define ASSERT_EQ(val1, val2) \
+ASSERT_PRED_FORMAT2(::testing::assert::EQ, val1, val2)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_NE
+/// @brief Inequality. (val1 != val2)
+#define EXPECT_NE(val1, val2) \
+EXPECT_PRED_FORMAT2(::testing::assert::NE, val1, val2)
+#define ASSERT_NE(val1, val2) \
+ASSERT_PRED_FORMAT2(::testing::assert::NE, val1, val2)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_LE
+/// @brief Less than or equal. (val1 <= val2)
+#define EXPECT_LE(val1, val2) \
+EXPECT_PRED_FORMAT2(::testing::assert::LE, val1, val2)
+#define ASSERT_LE(val1, val2) \
+ASSERT_PRED_FORMAT2(::testing::assert::LE, val1, val2)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_LT
+/// @brief Less than. (val1 < val2)
+#define EXPECT_LT(val1, val2) \
+EXPECT_PRED_FORMAT2(::testing::assert::LT, val1, val2)
+#define ASSERT_LT(val1, val2) \
+ASSERT_PRED_FORMAT2(::testing::assert::LT, val1, val2)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_GE
+/// @brief Greater than or equal. (val1 >= val2)
+#define EXPECT_GE(val1, val2) \
+EXPECT_PRED_FORMAT2(::testing::assert::GE, val1, val2)
+#define ASSERT_GE(val1, val2) \
+ASSERT_PRED_FORMAT2(::testing::assert::GE, val1, val2)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_GT
+/// @brief Greater than. (val1 > val2)
+#define EXPECT_GT(val1, val2) \
+EXPECT_PRED_FORMAT2(::testing::assert::GT, val1, val2)
+#define ASSERT_GT(val1, val2) \
+ASSERT_PRED_FORMAT2(::testing::assert::GT, val1, val2)
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_PRED1
+/// @brief Use a predicate function which returns a \c bool.
+/// @details Also available are <tt>EXPECT_PRED2(pred, v1, v2)</tt>
+/// and <tt>EXPECT_PRED3(pred, v1, v2, v3)</tt>.
+///
+/// If you have a function that returns true or false,
+/// or any value that can be implicitly converted to bool,
+/// this will print its arguments for free.
+/// ~~~
+/// int HasCommonDenominatorGT1(int x, int y) {
+///     if (y == 0) return x;
+///     if (y == 1) return 0;
+///     return HasCommonDenominatorGT1(y, x%y);
+/// }
+///
+/// TEST(Numbers, Denominator){
+///     EXPECT_PRED2(HasCommonDenominatorGT1, 100, 20);
+/// }
+/// ~~~
+
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_PRED_FORMAT1
+/// @brief Use a predicate function which returns an \c AssertionResult.
+/// @details Also available are <tt>EXPECT_PRED_FORMAT2(pred_format, v1, v2)</tt>
+/// and <tt>EXPECT_PRED_FORMAT3(pred_format, v1, v2, v3)</tt>.
+///
+/// The most flexibility for generating failure messages comes from
+/// defining predicate functions that return AssertionSuccess() or
+/// AssertionFailure(). In fact, most of the \c EXPECT|ASSERT macros are
+/// implemented this way.
+///
+/// For each variable, the predicate function is passed a text string of
+/// the expression and the evaluated result. You may use value types or
+/// reference types for the result parameters.
+/// ~~~
+/// int HasCommonDenominatorGT1(int x, int y) {
+///     if (y == 0) return x;
+///     if (y == 1) return 0;
+///     return HasCommonDenominatorGT1(y, x%y);
+/// }
+///
+/// testing::AssertionResult AssertCommonDenominator(
+///         const char* x_expr, const char* y_expr, int x, int y) {
+///    if (HasCommonDenominatorGT1(x,y)) return testing::AssertionSuccess();
+///    return ::testing::AssertionFailure()
+///        << x_expr << " and " << y_expr << " (" << x << " and " << y
+///        << ") have no common divisor as determined by HasCommonDenominatorGT1(x,y)."
+/// }
+///
+/// TEST(Numbers, Denominator){
+///     EXPECT_PRED_FORMAT2(AssertCommonDenominator, 99, 20);
+/// }
+/// ~~~
 
 #define BENCHTEST_NO_FATAL_FAILURE_(statement) \
 BENCHTEST_ASSERT_ ::testing::AssertionSuccess()) { \
@@ -321,14 +571,27 @@ BENCHTEST_ASSERT_ ::testing::AssertionSuccess()) { \
 } else BENCHTEST_TOKEN_(benchtest_fatal_, __LINE__): \
 if (false
 
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_NO_FATAL_FAILURE
+/// @brief Tests that \c statement doesn't add any new fatal failures.
+/// @details When a function terminates on a fatal (<tt>ASSERT</tt>) failure
+/// the caller will continue to run when it returns. You can
+/// stop the test with \c ASSERT_NO_FATAL_FAILURE or use
+/// \c EXPECT_NO_FATAL_FAILURE to provide more information.
+/// ~~~
+/// TEST(FooBar, SubRoutines) {
+///     ASSERT_NO_FATAL_FAILURE(Foo());
+///     EXPECT_NO_FATAL_FAILURE({
+///         Bar();
+///     }) << "More information";
+/// }
+/// ~~~
 #define EXPECT_NO_FATAL_FAILURE(statement) \
 BENCHTEST_NO_FATAL_FAILURE_(statement) \
 BENCHTEST_RESULT_NONFATAL_
-
 #define ASSERT_NO_FATAL_FAILURE(statement) \
 BENCHTEST_NO_FATAL_FAILURE_(statement) \
 BENCHTEST_RESULT_FATAL_
-
 
 #define BENCHTEST_CHECK_THROW_(statement, expected_exception) \
 BENCHTEST_ASSERT_ ::testing::AssertionSuccess()) { \
@@ -348,14 +611,15 @@ BENCHTEST_ASSERT_ ::testing::AssertionSuccess()) { \
 } else BENCHTEST_TOKEN_(benchtest_fatal_, __LINE__): \
 if (false
 
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_THROW
+/// @brief The \c statement must throw an exception of \c expected_exception type.
 #define EXPECT_THROW(statement, expected_exception) \
 BENCHTEST_CHECK_THROW_(statement, expected_exception) \
 BENCHTEST_RESULT_NONFATAL_
-
 #define ASSERT_THROW(statement, expected_exception) \
 BENCHTEST_CHECK_THROW_(statement, expected_exception) \
 BENCHTEST_RESULT_FATAL_
-
 
 #define BENCHTEST_CHECK_ANY_THROW_(statement) \
 BENCHTEST_ASSERT_ ::testing::AssertionSuccess()) { \
@@ -370,14 +634,15 @@ BENCHTEST_ASSERT_ ::testing::AssertionSuccess()) { \
 } else BENCHTEST_TOKEN_(benchtest_fatal_, __LINE__): \
 if (false
 
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_ANY_THROW
+/// @brief The \c statement must throw an exception of any type.
 #define EXPECT_ANY_THROW(statement) \
 BENCHTEST_CHECK_ANY_THROW_(statement) \
 BENCHTEST_RESULT_NONFATAL_
-
 #define ASSERT_ANY_THROW(statement) \
 BENCHTEST_CHECK_ANY_THROW_(statement) \
 BENCHTEST_RESULT_FATAL_
-
 
 #define BENCHTEST_CHECK_NO_THROW_(statement) \
 BENCHTEST_ASSERT_ ::testing::AssertionSuccess()) { \
@@ -392,150 +657,12 @@ BENCHTEST_ASSERT_ ::testing::AssertionSuccess()) { \
 } else BENCHTEST_TOKEN_(benchtest_fatal_, __LINE__): \
 if (false
 
+/// @ingroup benchtest_assert
+/// @hideinitializer @def EXPECT_NO_THROW
+/// @brief The \c statement must not throw any exception.
 #define EXPECT_NO_THROW(statement) \
 BENCHTEST_CHECK_NO_THROW_(statement) \
 BENCHTEST_RESULT_NONFATAL_
-
 #define ASSERT_NO_THROW(statement) \
 BENCHTEST_CHECK_NO_THROW_(statement) \
 BENCHTEST_RESULT_FATAL_
-
-
-#define SCOPED_TRACE() \
-auto BENCHTEST_TOKEN_(benchtest_tracer_, __LINE__) = ::testing::ScopeTracer(__FILE__, __LINE__)
-
-
-#define FAIL() \
-BENCHTEST_ASSERT_ \
-::testing::AssertionFailure() \
-BENCHTEST_RESULT_FATAL_
-
-#define ADD_FAILURE() \
-BENCHTEST_ASSERT_ \
-::testing::AssertionFailure() \
-BENCHTEST_RESULT_NONFATAL_
-
-#define ADD_FAILURE_AT(file, line) \
-BENCHTEST_ASSERT_ \
-::testing::AssertionFailure() \
-BENCHTEST_RESULT_NONFATAL_
-
-
-#define EXPECT_PRED1(pred, v1) \
-BENCHTEST_ASSERT_ \
-::testing::assert::PRED(#pred, #v1, pred, v1) \
-BENCHTEST_RESULT_NONFATAL_
-
-#define ASSERT_PRED1(pred, v1) \
-BENCHTEST_ASSERT_ \
-::testing::assert::PRED(#pred, #v1, pred, v1) \
-BENCHTEST_RESULT_FATAL_
-
-#define EXPECT_PRED_FORMAT1(pred_format, v1) \
-BENCHTEST_ASSERT_ \
-pred_format(#v1, v1) \
-BENCHTEST_RESULT_NONFATAL_
-
-#define ASSERT_PRED_FORMAT1(pred_format, v1) \
-BENCHTEST_ASSERT_ \
-pred_format(#v1, v1) \
-BENCHTEST_RESULT_FATAL_
-
-
-#define EXPECT_PRED2(pred, v1, v2) \
-BENCHTEST_ASSERT_ \
-::testing::assert::PRED(#pred, #v1, #v2, pred, v1, v2) \
-BENCHTEST_RESULT_NONFATAL_
-
-#define ASSERT_PRED2(pred, v1, v2) \
-BENCHTEST_ASSERT_ \
-::testing::assert::PRED(#pred, #v1, #v2, pred, v1, v2) \
-BENCHTEST_RESULT_FATAL_
-
-#define EXPECT_PRED_FORMAT2(pred_format, v1, v2) \
-BENCHTEST_ASSERT_ \
-pred_format(#v1, #v2, v1, v2) \
-BENCHTEST_RESULT_NONFATAL_
-
-#define ASSERT_PRED_FORMAT2(pred_format, v1, v2) \
-BENCHTEST_ASSERT_ \
-pred_format(#v1, #v2, v1, v2) \
-BENCHTEST_RESULT_FATAL_
-
-
-#define EXPECT_PRED3(pred, v1, v2, v3) \
-BENCHTEST_ASSERT_ \
-::testing::assert::PRED(#pred, #v1, #v2, #v3, pred, v1, v2, v3) \
-BENCHTEST_RESULT_NONFATAL_
-
-#define ASSERT_PRED3(pred, v1, v2, v3) \
-BENCHTEST_ASSERT_ \
-::testing::assert::PRED(#pred, #v1, #v2, #v3, pred, v1, v2, v3) \
-BENCHTEST_RESULT_FATAL_
-
-#define EXPECT_PRED_FORMAT3(pred_format, v1, v2, v3) \
-BENCHTEST_ASSERT_ \
-pred_format(#v1, #v2, #v3, v1, v2, v3) \
-BENCHTEST_RESULT_NONFATAL_
-
-#define ASSERT_PRED_FORMAT3(pred_format, v1, v2, v3) \
-BENCHTEST_ASSERT_ \
-pred_format(#v1, #v2, #v3, v1, v2, v3) \
-BENCHTEST_RESULT_FATAL_
-
-
-#define EXPECT_TRUE(condition) \
-EXPECT_PRED_FORMAT2(::testing::assert::EQ, true, condition)
-
-#define ASSERT_TRUE(condition) \
-ASSERT_PRED_FORMAT2(::testing::assert::EQ, true, condition)
-
-#define EXPECT_FALSE(condition) \
-EXPECT_PRED_FORMAT2(::testing::assert::EQ, false, condition)
-
-#define ASSERT_FALSE(condition) \
-ASSERT_PRED_FORMAT2(::testing::assert::EQ, false, condition)
-
-
-#define EXPECT_EQ(val1, val2) \
-EXPECT_PRED_FORMAT2(::testing::assert::EQ, val1, val2)
-
-#define ASSERT_EQ(val1, val2) \
-ASSERT_PRED_FORMAT2(::testing::assert::EQ, val1, val2)
-
-#define EXPECT_NE(val1, val2) \
-EXPECT_PRED_FORMAT2(::testing::assert::NE, val1, val2)
-
-#define ASSERT_NE(val1, val2) \
-ASSERT_PRED_FORMAT2(::testing::assert::NE, val1, val2)
-
-#define EXPECT_LE(val1, val2) \
-EXPECT_PRED_FORMAT2(::testing::assert::LE, val1, val2)
-
-#define ASSERT_LE(val1, val2) \
-ASSERT_PRED_FORMAT2(::testing::assert::LE, val1, val2)
-
-#define EXPECT_LT(val1, val2) \
-EXPECT_PRED_FORMAT2(::testing::assert::LT, val1, val2)
-
-#define ASSERT_LT(val1, val2) \
-ASSERT_PRED_FORMAT2(::testing::assert::LT, val1, val2)
-
-#define EXPECT_GE(val1, val2) \
-EXPECT_PRED_FORMAT2(::testing::assert::GE, val1, val2)
-
-#define ASSERT_GE(val1, val2) \
-ASSERT_PRED_FORMAT2(::testing::assert::GE, val1, val2)
-
-#define EXPECT_GT(val1, val2) \
-EXPECT_PRED_FORMAT2(::testing::assert::GT, val1, val2)
-
-#define ASSERT_GT(val1, val2) \
-ASSERT_PRED_FORMAT2(::testing::assert::GT, val1, val2)
-
-
-#define EXPECT_NEAR(val1, val2, abs_error) \
-EXPECT_PRED_FORMAT3(::testing::assert::NEAR, val1, val2, abs_error)
-
-#define ASSERT_NEAR(val1, val2, abs_error) \
-ASSERT_PRED_FORMAT3(::testing::assert::NEAR, val1, val2, abs_error)

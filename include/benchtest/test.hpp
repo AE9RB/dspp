@@ -16,6 +16,19 @@
 
 namespace testing {
     
+    /// @class Test benchtest.hpp
+    /// @ingroup benchtest
+    /// @brief Abstract class to be inherited by test fixtures.
+    /// @details See \ref benchtest "benchtest module documentation"
+    /// for more usage information.
+    /// ~~~
+    /// class MyCase : public testing::Test {
+    /// protected:
+    ///     void MyTest() {
+    ///     }
+    /// }
+    /// TEST_F(MyCase, MyTest)
+    /// ~~~
     class Test {
         friend class Runner;
         virtual Info* TestInfo() = 0;
@@ -36,17 +49,30 @@ namespace testing {
         bool keep_running = true;
     protected:
         Test() {}
+        /// @ingroup benchtest
+        /// @brief Called once before any tests in this case are run.
         static void SetUpTestCase() {}
+        /// @ingroup benchtest
+        /// @brief Called once when all tests in this case are finished.
         static void TearDownTestCase() {}
+        /// @ingroup benchtest
+        /// @brief Called at the start of every test using this fixture.
         virtual void SetUp() {}
+        /// @ingroup benchtest
+        /// @brief Called at the end of every test using this fixture.
         virtual void TearDown() {}
-        bool Benchmark(unsigned long max = 100) {
+        /// @ingroup benchtest
+        /// @brief Controls execution of a benchmarked section.
+        /// @param max Limit the maximum number of executions.
+        /// @retval bool True indicates the benchmarked section should execute again.
+        bool Benchmark(unsigned int max = 100) {
             auto end_time = ::std::chrono::high_resolution_clock::now();
             double this_time = ::std::chrono::duration<double, std::micro>(end_time - start_time).count();
             if (!keep_running) return false;
+            if (max < 5) max = 5;
             if (!size) {
                 size = max / 5;
-                if (size < 10) size = 10;
+                if (size < 5) size = 5;
             }
             if (count) {
                 if (results.size() < size) {
@@ -88,16 +114,18 @@ namespace testing {
             return keep_running;
         }
     public:
-        virtual bool HasFatalFailure() {
+        /// True if a fatal failure (ASSERT) happened in this test.
+        bool HasFatalFailure() {
             return TestInfo()->HasFatalFailure();
         }
-        virtual bool HasNonfatalFailure() {
+        /// True if a non-fatal failure (EXPECT) happened in this test.
+        bool HasNonfatalFailure() {
             return TestInfo()->HasNonfatalFailure();
         }
-        virtual bool HasFailure() {
+        /// True if either kind of failure was encountered.
+        bool HasFailure() {
             return TestInfo()->HasFailure();
         }
     };
-
 
 }

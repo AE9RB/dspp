@@ -1,0 +1,195 @@
+/*!
+@defgroup benchtest benchtest
+@brief Benchmarking and testing framework.
+
+The benchtest framework may be used to test your own applications.
+Usage and syntax is similar, but not 100% compatible, to the
+[Google C++ Testing Framework](https://code.google.com/p/googletest/).
+
+Setting up a new project to test is very easy. Make sure the dspp \c include
+directory is in your compiler include path. Then call the test runner in \c main().
+It is important to return from \c main() with the result of \c %run(). This is because
+any testing automation, like continuous integration, depends on the exit status
+to determine if any failures were encountered.
+
+~~~
+#include <benchtest.hpp>
+int main() {
+    testing::reporter(new testing::DefaultReporter);
+    return testing::run();
+}
+~~~
+
+A test run consists of test cases that have one or more tests
+that have expectations, assertions, and benchmarks.
+
+The examples in this documentation are pedagogical. Since the dspp
+library is tested with the benchtest framework, there are practical
+examples in the \c src/test_dspp directory for you to study.
+*/
+
+
+/*!
+@ingroup benchtest
+@hideinitializer @def TEST
+@brief Declare an inline test.
+@details
+~~~
+TEST(MyTestCase, MyTestName){
+    EXPECT_EQ(6, 2*3);
+}
+~~~
+*/
+
+
+/*!
+@ingroup benchtest
+@hideinitializer @def TEST_F
+@brief Declare a test using a fixture.
+@details
+Fixtures can be used when you have a number of tests that operate on similar data.
+~~~
+class Vectors : public testing::Test {
+protected:
+    std::vector<int> * data;
+    static void SetUpTestCase() {
+        data = new std::vector<int>;
+    }
+    static void TearDownTestCase() {
+        delete data;
+    }
+    void SetUp() {
+        data->assign(32, 0);
+    }
+    void TearDown() {
+        data->resize(0);
+    }
+    void popper() {
+        data->pop_back();
+        EXPECT_EQ(31, data->size());
+    }
+    void pusher() {
+        data->push_back(0);
+        EXPECT_EQ(33, data->size());
+    }
+}
+TEST_F(Vectors, popper)
+TEST_F(Vectors, pusher)
+~~~
+*/
+
+
+/*!
+@ingroup benchtest
+@hideinitializer @def TEST_T
+@brief Declare a test using a fixture template.
+@details
+A fixture template makes it easier to test code written to work
+with multiple data types or classes. For example, parts of the
+dspp library are tested using both float and double types.
+
+~~~
+template<typename T>
+class FFT : public testing::Test {
+protected:
+    std::array<std::complex<T>, 512> data;
+    void SetUp() {
+        /* Data loaded with a control set here */
+    }
+    void dft() {
+        dspp::FFT::dft(data);
+        /* Results validated here */
+    }
+    void idft() {
+        dspp::FFT::idft(data);
+        /* Results validated here */
+    }
+}
+TEST_T(FFT, float, dft)
+TEST_T(FFT, double, dft)
+TEST_T(FFT, float, idft)
+TEST_T(FFT, double, idft)
+~~~
+*/
+
+
+/*!
+@ingroup benchtest
+@fn testing::Test::Benchmark
+@details A test may include a single benchmark.
+~~~
+TEST(Lifter, performance){
+    while(Benchmark()) {
+        do_some_heavy_lifting();    
+    }
+}
+~~~
+The benchmarked section will run a minimum number of times equal to
+20% of \c max. It will continue to run until the \c max limit is hit or faster
+executions are not being found. Regardless of \c max, at least 5 iterations will be run.
+If you have a very slow algorithm, decreasing \c max can guard against
+accidentally long run times when tests are deployed to be run
+automatically, such as on a continuous integration server.
+
+If you have a very fast algorithm the timer may not provide enough
+resolution for good results. In this case it's usually easy to run
+a set to reduce the timer variance. However, consider that you may
+be testing too small of a work unit which will report unrealistic
+results because it would normally be inlined by the compiler or
+is strongly affected by memory caching.
+~~~
+/* Run a small FFT 100 times... */
+TEST(FFT, performance64){
+    std::array<std::complex<float>,64> data;
+    while(Benchmark()) {
+       for(int i=0; i<100; ++i) dspp::FFT::dft(data);
+    }
+}
+/* Run a large FFT one time... */
+TEST(FFT, performance8192){
+    std::array<std::complex<float>,8192> data;
+    while(Benchmark()) {
+       dspp::FFT::dft(data);
+    }
+}
+~~~
+*/
+
+
+/*!
+@defgroup benchtest_assert assertions
+@ingroup benchtest
+@brief Macros for expectations and assertions.
+
+Every \c EXPECT macro has a matching \c ASSERT macro.
+The difference is whether or not to continue testing the
+current unit. For example, 
+\c %EXPECT_TRUE(true) reports a failure and
+continues while \c %ASSERT_TRUE(false) reports a failure and
+terminates the current test unit. Typically, \c EXPECT will
+provide the most information for debugging, but \c ASSERT is
+better when subsequent failures would add useless clutter
+or confusion to the test report.
+
+It is important to consider that \c ASSERT failures terminate a
+test by returning from the current function. Any functions containing
+an \c ASSERT must be declared with a return type
+of \c void or you will get a compiler error.  If the \c ASSERT is in
+a function called by your test, the test will not stop running, only
+the current function. This is behavior you can depend on, for example,
+to ensure any cleanup is run to prevent resource leaks. However, test
+fixtures are usually a better way to handle initialization and cleanup.
+
+All macros allow appending of extra information to the failure report.
+This can be very helpful to someone trying to fix a failing test.
+The \ref PrintTo() formatters are used for appending values.
+~~~
+TEST(MyTestCase, MyTestName){
+    EXPECT_EQ(6, 2*3) << "Compiler is failing to do basic math.";
+    std::array<int, 4> a;
+    for (int i=0; i<4; ++i) {
+        ASSERT_EQ(0, a[i]) << "Array was not checked past index " << i << ".";
+    }
+}
+~~~
+*/

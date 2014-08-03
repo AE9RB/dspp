@@ -16,10 +16,29 @@
 
 namespace testing {
 
+    /// @ingroup benchtest
+    /// @brief Specialized printer for testing results.
+    /// @details This function is used to print the value of a type
+    /// in failure reports. If the type already supplies an
+    /// operator<< to \::std::ostream it is used by default.
+    /// It may not be possible to use operator<< or you may consider
+    /// it bad form to do so only for testing. In that case, specialize
+    /// this function to print your value.
     template <typename T>
     void PrintTo(const T& val, ::std::ostream* os) {
         *os << val;
     }
+
+    /// @ingroup benchtest
+    /// @brief Prints \c val to a string using \ref PrintTo().
+    template <typename T>
+    ::std::string PrintToString(const T& val) {
+        ::std::stringstream ss;
+        PrintTo(val, &ss);
+        return ss.str();
+    }
+
+    /// @cond BENCHTEST_IMPL
 
     inline void PrintTo(const bool& val, ::std::ostream* os) {
         if (val) *os << "true";
@@ -38,12 +57,6 @@ namespace testing {
         *os << std::setprecision(::std::numeric_limits<long double>::digits10) << val;
     }
 
-
-    template <typename T>
-    ::std::string PrintToString(const T& val) {
-        ::std::stringstream ss;
-        PrintTo(val, &ss);
-        return ss.str();
-    }
+    /// @endcond
 
 }

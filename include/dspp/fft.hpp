@@ -39,18 +39,18 @@ namespace dspp {
 /// Example usage:
 ///
 ///     std::array<std::complex<float>,512> data;
-///     FFT::dft(data);
+///     dspp::FFT::dft(data);
 ///
 /// C-style arrays are supported:
 ///
 ///     std::complex<float> data[512];
-///     FFT::dft(data);
+///     dspp::FFT::dft(data);
 ///
 /// Out-of-place transform:
 ///
 ///     std::array<std::complex<double>,64> in;
 ///     std::array<std::complex<double>,64> out;
-///     FFT::dft(in, out);
+///     dspp::FFT::dft(in, out);
 ///
 namespace FFT {
 /// @cond DSPP_IMPL
@@ -63,7 +63,7 @@ struct Twiddle {
     static const std::array<std::complex<T>, N/4> t3;
 };
 template<typename T>
-static std::vector<std::complex<T>> twiddles(double a, int d, size_t n) {
+static inline std::vector<std::complex<T>> twiddles(double a, int d, size_t n) {
     std::vector<std::complex<T>> twids(n/4);
     double theta = two_pi<double>()*d/n;
     for (size_t i=0; i < n/4; ++i) {
@@ -164,7 +164,7 @@ template<size_t N, bool ispow4>
 struct BitReverse {
     static const std::array<size_t, N> pattern;
 };
-static std::vector<size_t> bitpattern(size_t n, bool ispow4) {
+static inline std::vector<size_t> bitpattern(size_t n, bool ispow4) {
     std::vector<size_t> l;
     n = (n*n) << 1;
     if (ispow4) n <<= 1;

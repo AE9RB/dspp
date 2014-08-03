@@ -18,7 +18,7 @@ too much trouble getting them installed.
  * [Doxygen](http://www.doxygen.org)
  * [Graphviz](http://www.graphviz.org)
 
-Cmake can create a typical Makefile as well as project files for Xcode,
+CMake can create a typical Makefile as well as project files for Xcode,
 Visual Studio, and many others. Here's a quick start for Makefile users:
 
 ```
