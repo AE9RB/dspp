@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mixer',['Mixer',['../structdspp_1_1_mixer.html',1,'dspp']]]
+  ['fmap',['Fmap',['../classdspp_1_1_fmap.html',1,'dspp']]]
 ];

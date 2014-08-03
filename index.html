@@ -55,6 +55,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li>
@@ -95,7 +96,7 @@ $(document).ready(function(){initNavTree('index.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -114,14 +115,14 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p class="formulaDsp">
 \[\begin{gather} \nabla \cdot \mathbf{D} = \rho_\text{f} \\ \nabla \cdot \mathbf{B} = 0 \\ \nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}} {\partial t} \\ \nabla \times \mathbf{H} = \mathbf{J}_\text{f} + \frac{\partial \mathbf{D}} {\partial t} \end{gather}\]
 </p>
-<p>A testing framework is part of the dspp library and all commits are verified with a continuous integration server. You can also use this testing framework for your own applications, if you so desire. The testing framework includes a microbenchmarking tool. This makes it difficult to accidentally regress performance and easy to test different implementations. You can be confident that performance is suitable for real-time applications like Software Defined Radio.</p>
+<p>A testing framework is part of the dspp library and all commits are verified with a continuous integration server. You can also use this framework for testing your own applications, if you so desire. The testing framework includes a benchmarking tool. This makes it difficult to accidentally regress performance and easy to test different implementations. You can be confident that performance is suitable for real-time applications like Software Defined Radio.</p>
 <h2>Installation</h2>
 <ol type="1">
 <li>Download or clone from GitHub. <a href="https://github.com/AE9RB/dspp">https://github.com/AE9RB/dspp</a></li>
-<li>Add the include directory to your compiler include path.</li>
+<li>Add the <code>include</code> directory to your compiler include path.</li>
 <li>#include &lt;dspp.hpp&gt;</li>
 </ol>
-<p>The dspp library is a collection of headers like the Standard Template Library. There's nothing to compile except your own application. There are no dependencies to install.</p>
+<p>The dspp library is a collection of headers like the Standard Template Library. There's nothing to compile except your own application. There are no dependencies to install. The only thing you need to bring to the party is a C++11 compiler.</p>
 <h2>Contribute</h2>
 <p>View the <a href="https://github.com/AE9RB/dspp">README</a> on GitHub to learn more. Submit a pull request when you have something to contribute. </p>
 </div></div><!-- contents -->

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['welch',['welch',['../namespacedspp_1_1window.html#aed564c55c4fdfc9b4b4c16b0de36f338',1,'dspp::window']]]
+  ['name',['name',['../classtesting_1_1_info.html#aedf3f7a929042a571191aaee3244e8d0',1,'testing::Info']]]
 ];

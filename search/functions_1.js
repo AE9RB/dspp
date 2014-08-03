@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['dft',['dft',['../namespacedspp_1_1_f_f_t.html#ae35966a1227181fec9241c30b6dbcb49',1,'dspp::FFT::dft(std::array&lt; std::complex&lt; T &gt;, N &gt; &amp;data)'],['../namespacedspp_1_1_f_f_t.html#aa9e99911c1b2e55e4541baf91bee55fc',1,'dspp::FFT::dft(const std::array&lt; std::complex&lt; T &gt;, N &gt; &amp;in, std::array&lt; std::complex&lt; T &gt;, N &gt; &amp;out)'],['../namespacedspp_1_1_f_f_t.html#a64631286760e269366ec74835916b53f',1,'dspp::FFT::dft(std::complex&lt; T &gt;(&amp;data)[N])'],['../namespacedspp_1_1_f_f_t.html#adff75e013daa71640fa751512e03572a',1,'dspp::FFT::dft(const std::complex&lt; T &gt;(&amp;in)[N], std::complex&lt; T &gt;(&amp;out)[N])']]]
+  ['bartlett',['bartlett',['../namespacedspp_1_1window.html#a86a32905dab4d11b272455803691c0bb',1,'dspp::window']]],
+  ['bench',['Bench',['../classtesting_1_1_reporter.html#af820b7e4e13b4c203d6ae6af9feed9f2',1,'testing::Reporter::Bench()'],['../classtesting_1_1_default_reporter.html#a6cf76836b691980ae6b474ebb5390b2e',1,'testing::DefaultReporter::Bench()']]],
+  ['benchmark',['Benchmark',['../group__benchtest.html#gaed39aa5cdb4be21f0a4eddb3deee1172',1,'testing::Test']]]
 ];
