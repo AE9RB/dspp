@@ -25,9 +25,6 @@
     extensions: ["tex2jax.js"],
     jax: ["input/TeX","output/HTML-CSS"],
 });
-MathJax.Hub.Config({
-    displayAlign: "left"
-});
 </script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -412,7 +409,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <p>A test may include a single benchmark. </p><div class="fragment"><div class="line"><a class="code" href="group__benchtest.html#gad8b332753515c0ab8baada563c2547eb">TEST</a>(Lifter, performance){</div>
 <div class="line">    <span class="keywordflow">while</span>(<a class="code" href="group__benchtest.html#gaed39aa5cdb4be21f0a4eddb3deee1172">Benchmark</a>()) {</div>
-<div class="line">        do_some_heavy_lifting();    </div>
+<div class="line">        do_some_heavy_lifting();</div>
 <div class="line">    }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p> The benchmarked section will run a minimum number of times equal to 20% of <code>max</code>. It will continue to run until the <code>max</code> limit is hit or faster executions are not being found. Regardless of <code>max</code>, at least 5 iterations will be run. If you have a very slow algorithm, decreasing <code>max</code> can guard against accidentally long run times when tests are deployed to be run automatically, such as on a continuous integration server.</p>

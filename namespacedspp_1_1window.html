@@ -25,9 +25,6 @@
     extensions: ["tex2jax.js"],
     jax: ["input/TeX","output/HTML-CSS"],
 });
-MathJax.Hub.Config({
-    displayAlign: "left"
-});
 </script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -199,6 +196,9 @@ template&lt;typename T  = double&gt; </div>
 <p class="formulaDsp">
 \[ w(n)=1 \]
 </p>
+ <div class="image">
+<img src="window_rect.png" alt="window_rect.png"/>
+</div>
  
 </div>
 </div>
@@ -230,6 +230,9 @@ template&lt;typename T  = double&gt; </div>
 <p class="formulaDsp">
 \[ w(n)=1-\begin{cases} \left|\frac{n-\frac{N-1}{2}}{\frac{N}{2}}\right| &amp; \text{if $N$ is even} \\ \left|\frac{n-\frac{N-1}{2}}{\frac{N+1}{2}}\right| &amp; \text{if $N$ is odd} \end{cases} \qquad 0 \leq n \leq N-1 \]
 </p>
+ <div class="image">
+<img src="window_triang.png" alt="window_triang.png"/>
+</div>
  
 </div>
 </div>
@@ -261,6 +264,9 @@ template&lt;typename T  = double&gt; </div>
 <p class="formulaDsp">
 \[ w(n) = 1- \left|\frac{n-\frac{N-1}{2}}{\frac{N-1}{2}}\right| \qquad 0 \leq n \leq N-1 \]
 </p>
+ <div class="image">
+<img src="window_bartlett.png" alt="window_bartlett.png"/>
+</div>
  
 </div>
 </div>
@@ -292,6 +298,9 @@ template&lt;typename T  = double&gt; </div>
 <p class="formulaDsp">
 \[ w(n) = 0.5 - 0.5 \cos\left(\frac{2\pi{n}}{N-1}\right) \qquad 0 \leq n \leq N-1 \]
 </p>
+ <div class="image">
+<img src="window_hann.png" alt="window_hann.png"/>
+</div>
  
 </div>
 </div>
@@ -323,6 +332,9 @@ template&lt;typename T  = double&gt; </div>
 <p class="formulaDsp">
 \[ w(n)=1 - \left(\frac{n-\frac{N-1}{2}}{\frac{N+1}{2}}\right)^2 \qquad 0 \leq n \leq N-1 \]
 </p>
+ <div class="image">
+<img src="window_welch.png" alt="window_welch.png"/>
+</div>
  
 </div>
 </div>
@@ -354,6 +366,9 @@ template&lt;typename T  = double&gt; </div>
 <p class="formulaDsp">
 \[ w(n)=\begin{cases} 1 - 6\left(\frac{|n|}{N/2}\right)^2 + 6\left(\frac{|n|}{N/2}\right)^3 &amp; 0 \leq |n| \leq (N-1)/4 \\ 2\left(1-\frac{|n|}{N/2}\right)^3 &amp; (N-1)/4 \lt |n| \le (N-1)/2 \end{cases} \qquad -\frac{N-1}{2} \leq n \leq \frac{N-1}{2} \]
 </p>
+ <div class="image">
+<img src="window_parzen.png" alt="window_parzen.png"/>
+</div>
  
 </div>
 </div>
