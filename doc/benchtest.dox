@@ -120,7 +120,7 @@ TEST_T(FFT, double, idft)
 ~~~
 TEST(Lifter, performance){
     while(Benchmark()) {
-        do_some_heavy_lifting();    
+        do_some_heavy_lifting();
     }
 }
 ~~~
@@ -163,7 +163,7 @@ TEST(FFT, performance8192){
 
 Every \c EXPECT macro has a matching \c ASSERT macro.
 The difference is whether or not to continue testing the
-current unit. For example, 
+current unit. For example,
 \c %EXPECT_TRUE(true) reports a failure and
 continues while \c %ASSERT_TRUE(false) reports a failure and
 terminates the current test unit. Typically, \c EXPECT will

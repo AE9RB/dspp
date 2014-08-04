@@ -26,7 +26,7 @@ namespace dspp {
 
 // Mathematical constants use the same syntax as Boost library.
 #define DSPP_DEFINE_MATH_CONSTANT(name, x)\
-template<typename T> inline constexpr T name() {return x;}
+template<typename T=double> inline constexpr T name() {return x;}
 /// @brief 3.141592653589793238462643383279502884e+00
 DSPP_DEFINE_MATH_CONSTANT(pi, 3.141592653589793238462643383279502884e+00)
 /// @brief 6.283185307179586476925286766559005768e+00

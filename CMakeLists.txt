@@ -3,9 +3,9 @@ cmake_minimum_required (VERSION 2.8)
 project (dspp)
 enable_testing()
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     set(CMAKE_C_FLAGS "-std=c99 ${CMAKE_C_FLAGS}")
@@ -44,12 +44,24 @@ file(GLOB_RECURSE SRC_TEST_DSPP "src/test_dspp/*.cpp")
 add_executable(test_dspp ${SRC_TEST_DSPP} ${INCLUDE_DSPP} ${INCLUDE_BENCHTEST})
 add_test(NAME run_test_dspp COMMAND test_dspp)
 
+### documentation images
+
+find_package(Gnuplot)
+if(GNUPLOT_FOUND)
+file(GLOB_RECURSE SRC_DOCPLOT "src/docplot/*.cpp")
+add_executable(docplot EXCLUDE_FROM_ALL ${SRC_DOCPLOT} ${INCLUDE_DSPP})
+set_target_properties(docplot PROPERTIES COMPILE_FLAGS -DGNUPLOT_CMD=\\"${GNUPLOT_EXECUTABLE}\\")
+endif(GNUPLOT_FOUND)
+
 ### documentation
 
 find_package(Doxygen)
-if(DOXYGEN_FOUND)
+if(DOXYGEN_FOUND AND GNUPLOT_FOUND)
 add_custom_target(doc
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Doxyfile
+    COMMAND ${CMAKE_COMMAND} -E make_directory "images"
+    COMMAND docplot
+    COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Doxyfile
     COMMENT "Generating API documentation with Doxygen" VERBATIM
 )
-endif(DOXYGEN_FOUND)
+add_dependencies(doc docplot)
+endif(DOXYGEN_FOUND AND GNUPLOT_FOUND)

@@ -17,6 +17,9 @@ too much trouble getting them installed.
  * [CMake](http://www.cmake.org)
  * [Doxygen](http://www.doxygen.org)
  * [Graphviz](http://www.graphviz.org)
+ * [Gnuplot](http://www.gnuplot.info)
+ * [Cairo](http://cairographics.org)
+ * Lucida Grande (font)
 
 CMake can create a typical Makefile as well as project files for Xcode,
 Visual Studio, and many others. Here's a quick start for Makefile users:
@@ -24,4 +27,5 @@ Visual Studio, and many others. Here's a quick start for Makefile users:
 ```
 $ cmake .
 $ make && ctest
+$ make doc
 ```

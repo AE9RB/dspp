@@ -58,6 +58,7 @@ namespace window {
 /// \f[
 /// w(n)=1
 /// \f]
+/// @image html window_rect.png
 template<typename T = double>
 Fmap<T>
 rect(size_t size, bool symm = true) {
@@ -76,6 +77,7 @@ rect(size_t size, bool symm = true) {
 /// \end{cases}
 /// \qquad 0 \leq n \leq N-1
 /// \f]
+/// @image html window_triang.png
 template<typename T = double>
 Fmap<T>
 triang(size_t size, bool symm = true) {
@@ -94,6 +96,7 @@ triang(size_t size, bool symm = true) {
 /// w(n) = 1- \left|\frac{n-\frac{N-1}{2}}{\frac{N-1}{2}}\right|
 ///        \qquad 0 \leq n \leq N-1
 /// \f]
+/// @image html window_bartlett.png
 template<typename T = double>
 Fmap<T>
 bartlett(size_t size, bool symm = true) {
@@ -111,6 +114,7 @@ bartlett(size_t size, bool symm = true) {
 /// w(n) = 0.5 - 0.5 \cos\left(\frac{2\pi{n}}{N-1}\right)
 ///        \qquad 0 \leq n \leq N-1
 /// \f]
+/// @image html window_hann.png
 template<typename T = double>
 Fmap<T>
 hann(size_t size, bool symm = true) {
@@ -127,6 +131,7 @@ hann(size_t size, bool symm = true) {
 /// w(n)=1 - \left(\frac{n-\frac{N-1}{2}}{\frac{N+1}{2}}\right)^2
 ///          \qquad 0 \leq n \leq N-1
 /// \f]
+/// @image html window_welch.png
 template<typename T = double>
 Fmap<T>
 welch(size_t size, bool symm = true) {
@@ -149,6 +154,7 @@ welch(size_t size, bool symm = true) {
 /// \end{cases}
 /// \qquad -\frac{N-1}{2} \leq n \leq \frac{N-1}{2}
 /// \f]
+/// @image html window_parzen.png
 template<typename T = double>
 Fmap<T>
 parzen(size_t size, bool symm = true) {
