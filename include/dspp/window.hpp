@@ -175,6 +175,27 @@ parzen(size_t size, bool symm = true) {
     });
 }
 
+/// \f[
+/// w(x) = (1-|x|)cos(\pi\left|x\right|)+\frac{1}{\pi}sin(\pi\left|x\right|)
+/// \qquad -1 \leq x \leq 1
+/// \f]
+/// @image html window_bohman.png
+template<typename T = double>
+Fmap<T>
+bohman(size_t size, bool symm = true) {
+    if (size==1) return Fmap<T>(size, [=](size_t index)->T {
+        return 1;
+    });
+    T len = size - 1;
+    bool odd = size & 1;
+    if (!symm && !odd) ++len;
+    return Fmap<T>(size, [=](size_t index)->T {
+        T x = fabs(index/(len/2) - 1);
+        if (x==1) return 0;
+        return (1 - x) * cos(pi<T>() * x) + 1.0 / pi<T>() * sin(pi<T>() * x);
+    });
+}
+
 } /* namespace window */
 } /* namespace dspp */
 

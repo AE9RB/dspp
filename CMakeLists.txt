@@ -50,7 +50,10 @@ find_package(Gnuplot)
 if(GNUPLOT_FOUND)
 file(GLOB_RECURSE SRC_DOCPLOT "src/docplot/*.cpp")
 add_executable(docplot EXCLUDE_FROM_ALL ${SRC_DOCPLOT} ${INCLUDE_DSPP})
-set_target_properties(docplot PROPERTIES COMPILE_FLAGS -DGNUPLOT_CMD=\\"${GNUPLOT_EXECUTABLE}\\")
+set_target_properties(docplot PROPERTIES
+    COMPILE_FLAGS -o3
+    DEFINE_SYMBOL -DGNUPLOT_CMD=${GNUPLOT_EXECUTABLE}
+)
 endif(GNUPLOT_FOUND)
 
 ### documentation

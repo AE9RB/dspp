@@ -140,6 +140,12 @@ protected:
         EXPECT_EQ(0.00274348422496571, even[0]);
     }
 
+    void bohman() {
+        check([](size_t size, bool symm) {
+            return window::bohman<T>(size,symm);
+        }, 0);
+    }
+
 };
 
 TEST_T(Window, double, rect);
@@ -148,3 +154,4 @@ TEST_T(Window, double, welch);
 TEST_T(Window, double, parzen);
 TEST_T(Window, double, triang);
 TEST_T(Window, double, bartlett);
+TEST_T(Window, double, bohman);
