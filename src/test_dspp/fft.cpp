@@ -108,22 +108,22 @@ protected:
             test16_in[i] = ref1[i];
             if (i<8) test8_in[i] = ref2[i];
         }
-        dspp::FFT::idft(test16_in, test16_out);
+        dspp::FFT::dft(test16_in, test16_out, 1);
         for (size_t i=0; i<16; ++i) {
             SCOPED_TRACE() << "i=" << i;
             ASSERT_EQ(std::complex<T>(ref0[i]), test16_out[i] / std::complex<T>(16));
         }
-        dspp::FFT::idft(test16_in);
+        dspp::FFT::dft(test16_in, 1);
         for (size_t i=0; i<16; ++i) {
             SCOPED_TRACE() << "i=" << i;
             ASSERT_EQ(std::complex<T>(ref0[i]), test16_in[i] / std::complex<T>(16));
         }
-        dspp::FFT::idft(test8_in, test8_out);
+        dspp::FFT::dft(test8_in, test8_out, 1);
         for (size_t i=0; i<8; ++i) {
             SCOPED_TRACE() << "i=" << i;
             ASSERT_EQ(std::complex<T>(ref0[i]), test8_out[i] / std::complex<T>(8));
         }
-        dspp::FFT::idft(test8_in);
+        dspp::FFT::dft(test8_in, 1);
         for (size_t i=0; i<8; ++i) {
             SCOPED_TRACE() << "i=" << i;
             ASSERT_EQ(std::complex<T>(ref0[i]), test8_in[i] / std::complex<T>(8));
