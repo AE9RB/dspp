@@ -31,119 +31,102 @@ template<typename T>
 class Window : public testing::Test {
 protected:
 
-    void check(function<Fmap<T>(size_t, bool)> fn, int zero) {
+    // convenience for development
+    void print(vector<T> &&data) {
+        cout << "[";
+        for (auto i : data) cout << i << ", ";
+        cout << "]\n";
+    }
+    void print(function<vector<T>(size_t, bool)> fn) {
+        cout << "symm8 ";
+        print(fn(8, true));
+        cout << "symm9 ";
+        print(fn(9, true));
+        cout << "peri8 ";
+        print(fn(8, false));
+        cout << "peri9 ";
+        print(fn(9, false));
+    }
+
+    // Check middle and ends for each combination of
+    // even/odd and symmetric/periodic
+    void check(function<vector<T>(size_t, bool)> fn, T s8, T s9, T p8, T p9) {
         size_t last, mid;
 
-        auto evensymm = fn(16, true);
-        last = evensymm.size()-1;
+        auto symm8 = fn(8, true);
+        last = symm8.size()-1;
         mid = last/2;
-        EXPECT_EQ(evensymm[mid], evensymm[mid+1]);
-        EXPECT_EQ(evensymm[0], evensymm[last]);
+        EXPECT_EQ(symm8[mid], symm8[mid+1]);
+        EXPECT_EQ(symm8[0], symm8[last]);
+        EXPECT_EQ(s8, symm8[last]);
 
-        auto oddsymm = fn(17, true);
-        last = oddsymm.size()-1;
-        mid = oddsymm.size()/2;
-        EXPECT_EQ(oddsymm[mid-1], oddsymm[mid+1]);
-        EXPECT_EQ(oddsymm[0], oddsymm[last]);
+        auto symm9 = fn(9, true);
+        last = symm9.size()-1;
+        mid = symm9.size()/2;
+        EXPECT_EQ(symm9[mid-1], symm9[mid+1]);
+        EXPECT_EQ(symm9[0], symm9[last]);
+        EXPECT_EQ(s9, symm9[last]);
 
-        auto even = fn(16, false);
-        last = even.size()-1;
-        mid = even.size()/2;
-        EXPECT_EQ(even[mid-1], even[mid+1]);
-        EXPECT_EQ(even[1], even[last]);
+        auto peri8 = fn(8, false);
+        last = peri8.size()-1;
+        mid = peri8.size()/2;
+        EXPECT_EQ(peri8[mid-1], peri8[mid+1]);
+        EXPECT_EQ(peri8[1], peri8[last]);
+        EXPECT_EQ(p8, peri8[last]);
 
-        auto odd = fn(17, false);
-        last = odd.size()-1;
-        mid = odd.size()/2;
-        EXPECT_EQ(odd[mid-1], odd[mid+1]);
-        EXPECT_EQ(odd[0], odd[last]);
+        auto peri9 = fn(9, false);
+        last = peri9.size()-1;
+        mid = peri9.size()/2;
+        EXPECT_EQ(peri9[mid-1], peri9[mid+1]);
+        EXPECT_EQ(peri9[0], peri9[last]);
+        EXPECT_EQ(p9, peri9[last]);
 
         // size of 1 should always have single value of 1
         EXPECT_EQ(1, fn(1, false)[0]);
         EXPECT_EQ(1, fn(1, true)[0]);
-
-        if (zero == 0) {
-            // converge to 0 at the ends
-            EXPECT_EQ(0, evensymm[0]);
-            EXPECT_EQ(0, oddsymm[0]);
-            EXPECT_EQ(0, even[0]);
-            EXPECT_EQ(0, odd[0]);
-        } else if (zero == -1) {
-            // converge to 0 one beyond the ends
-            EXPECT_EQ(0, evensymm[evensymm.size()]);
-            EXPECT_EQ(0, oddsymm[oddsymm.size()]);
-            EXPECT_EQ(0, even[even.size()+1]);
-            EXPECT_EQ(0, odd[odd.size()]);
-        } // else don't check, special case
-    }
-
-    // convenience for development
-    void print(Fmap<T> &&data) {
-        std::cout << "[";
-        for (auto i : data) std::cout << i << ", ";
-        std::cout << "]\n";
-    }
-    void print(function<Fmap<T>(size_t, bool)> fn, size_t size) {
-        std::cout << "symm=true  ";
-        print(fn(size, true));
-        std::cout << "symm=false ";
-        print(fn(size, false));
-    }
-
-    void triang() {
-        check([](size_t size, bool symm) {
-            return window::triang<T>(size,symm);
-        }, 1);
-
-        // even symmetric never converges to zero
-        auto evensymm = window::triang<T>(8, true);
-        auto oddsymm = window::triang<T>(9, true);
-        auto even = window::triang<T>(8, false);
-        auto odd = window::triang<T>(9, false);
-        EXPECT_EQ(0.125, evensymm[0]);
-        EXPECT_EQ(0, oddsymm[oddsymm.size()]);
-        EXPECT_EQ(0, even[even.size()+1]);
-        EXPECT_EQ(0, odd[odd.size()]);
-    }
-
-    void bartlett() {
-        check([](size_t size, bool symm) {
-            return window::bartlett<T>(size,symm);
-        }, 0);
     }
 
     void rect() {
         check([](size_t size, bool symm) {
-            return window::rect<T>(size,symm);
-        }, 1);
+            return window::rect(vector<T>(size,1),symm);
+        }, 1, 1, 1, 1);
+    }
+
+    void triang() {
+        check([](size_t size, bool symm) {
+            return window::triang(vector<T>(size,1),symm);
+        }, 0.125, 0.2, 0.4, 0.2);
+    }
+
+    void bartlett() {
+        check([](size_t size, bool symm) {
+            return window::bartlett(vector<T>(size,1),symm);
+        }, 0, 0, 0.25, 0);
     }
 
     void hann() {
         check([](size_t size, bool symm) {
-            return window::hann<T>(size,symm);
-        }, 0);
+            return window::hann(vector<T>(size,1),symm);
+        }, 0, 0, 0.14644660940672627, 0);
     }
 
     void welch() {
         check([](size_t size, bool symm) {
-            return window::welch<T>(size,symm);
-        }, -1);
+            return window::welch(vector<T>(size,1),symm);
+        }, 0.39506172839506171, 0.36, 0.64, 0.36);
     }
 
     void parzen() {
         check([](size_t size, bool symm) {
-            return window::parzen<T>(size,symm);
-        }, 1);
-        auto evensymm = window::parzen<T>(8, true);
-        auto even = window::parzen<T>(8, false);
-        EXPECT_EQ(0.00390625, evensymm[0]);
-        EXPECT_EQ(0.00274348422496571, even[0]);
+            return window::parzen(vector<T>(size,1),symm);
+        }, 0.00390625, 0.0027434842249657101,
+        0.074074074074074098, 0.0027434842249657101);
     }
 
     void bohman() {
         check([](size_t size, bool symm) {
-            return window::bohman<T>(size,symm);
-        }, 0);
+            return window::bohman(vector<T>(size,1),symm);
+        }, 0, 0, 0.048302383742639676, 0);
     }
 
 };

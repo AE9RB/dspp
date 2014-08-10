@@ -42,29 +42,41 @@ namespace dspp {
 /// length but still need a single maximum value. This is accomplished by
 /// deleting the right-most coefficient. The dspp window functions can do this
 /// automatically when the \p symm parameter is false. For example, a window of
-/// \p size 1024 with \p symm false will be computed as if N is 1025.
+/// \p size() 1024 with \p symm false will be computed as if N is 1025.
 ///
 /// <h2 class="groupheader"> Function Prototype</h2>
 /// <tt>\#include <dspp/window.hpp></tt>
 ///
 /// All window functions have the same prototype.
-/// @tparam T Numeric type of generated points, e.g., float or double.
-/// @retval Fmap<T> An object you can iterate over or randomly access.
-/// @param size Number of samples to generate.
+/// @retval T& A reference to the container that was windowed.
+/// @param w A container of data for application of the window. To get the
+///          window coefficients supply a container full of 1s. The container
+///          must provide a forward iterator, T::value_type, and size().
 /// @param symm True generates a symmetric window for filter design.<br>
 ///             False generates a periodic window for spectral analysis.
+///
+/// Some windows are generated with sine or FFT functions. If performance is
+/// important then use a stored copy of the coefficients instead of generating
+/// the window every time.
+/// ~~~
+///     // Obtaining window coefficients
+///     auto w = dspp::window::hann(std::vector<float>(32,1));
+/// ~~~
+/// For creating FIR filters you can apply the window to an existing container.
+/// ~~~
+///     // Applying window to an existing container
+///     std::array<double, 128> filter = some_fir_filter();
+///     dspp::window::hann(filter);
+/// ~~~
 namespace window {
 
 /// \f[
 /// w(n)=1
 /// \f]
 /// @image html window_rect.png
-template<typename T = double>
-Fmap<T>
-rect(size_t size, bool symm = true) {
-    return Fmap<T>(size, [](size_t index)->T {
-        return 1;
-    });
+template <class T>
+T& rect(T&& w, bool symm) {
+    return w;
 }
 
 /// @headerfile "include/dspp/fft.hpp"
@@ -78,18 +90,21 @@ rect(size_t size, bool symm = true) {
 /// \qquad 0 \leq n \leq N-1
 /// \f]
 /// @image html window_triang.png
-template<typename T = double>
-Fmap<T>
-triang(size_t size, bool symm = true) {
-    T len = size;
-    bool odd = size & 1;
+template <class T>
+T& triang(T&& w, bool symm) {
+    typedef typename T::value_type Tv;
+    Tv len = w.size();
+    bool odd = w.size() & 1;
     if (!symm && !odd) ++len;
-    T midm = (len-1) / 2;
+    Tv midm = (len-1) / 2;
     if (!symm || odd) ++len;
-    T midp = len / 2;
-    return Fmap<T>(size, [=](size_t index)->T {
-        return 1 - fabs((index - midm) / midp);
-    });
+    Tv midp = len / 2;
+    Tv n = 0;
+    for (auto &v : w) {
+        v *= 1 - fabs((n - midm) / midp);
+        ++n;
+    }
+    return w;
 }
 
 /// \f[
@@ -97,17 +112,21 @@ triang(size_t size, bool symm = true) {
 ///        \qquad 0 \leq n \leq N-1
 /// \f]
 /// @image html window_bartlett.png
-template<typename T = double>
-Fmap<T>
-bartlett(size_t size, bool symm = true) {
-    if (size==1) return rect<T>(1);
-    T len = size;
-    bool odd = size & 1;
-    if (!symm && !odd) ++len;
-    T midm = (len - 1) / 2;
-    return Fmap<T>(size, [=](size_t index)->T {
-        return 1 - fabs((index - midm) / midm);
-    });
+template <class T>
+T& bartlett(T&& w, bool symm) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv midm = (len-1) / 2;
+        Tv n = 0;
+        for (auto &v : w) {
+            v *= 1 - fabs((n - midm) / midm);
+            ++n;
+        }
+    }
+    return w;
 }
 
 /// \f[
@@ -115,16 +134,20 @@ bartlett(size_t size, bool symm = true) {
 ///        \qquad 0 \leq n \leq N-1
 /// \f]
 /// @image html window_hann.png
-template<typename T = double>
-Fmap<T>
-hann(size_t size, bool symm = true) {
-    if (size==1) return rect<T>(1);
-    T len = size - 1;
-    bool odd = size & 1;
-    if (!symm && !odd) ++len;
-    return Fmap<T>(size, [=](size_t index)->T {
-        return .5 - .5 * cos((two_pi<T>()*index)/len);
-    });
+template <class T>
+T& hann(T&& w, bool symm) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size() - 1;
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv n = 0;
+        for (auto &v : w) {
+            v *= .5 - .5 * cos((two_pi<Tv>()*n)/len);
+            ++n;
+        }
+    }
+    return w;
 }
 
 /// \f[
@@ -132,47 +155,53 @@ hann(size_t size, bool symm = true) {
 ///          \qquad 0 \leq n \leq N-1
 /// \f]
 /// @image html window_welch.png
-template<typename T = double>
-Fmap<T>
-welch(size_t size, bool symm = true) {
-    T len = size;
-    bool odd = size & 1;
+template <class T>
+T& welch(T&& w, bool symm) {
+    typedef typename T::value_type Tv;
+    Tv len = w.size();
+    bool odd = w.size() & 1;
     if (!symm && !odd) ++len;
-    T midm = (len-1) / 2;
-    T midp = (len+1) / 2;
-    return Fmap<T>(size, [=](size_t index)->T {
-        return 1 - pow(((index - midm)/midp), 2);
-    });
+    Tv midm = (len-1) / 2;
+    Tv midp = (len+1) / 2;
+    Tv n = 0;
+    for (auto &v : w) {
+        v *= 1 - pow(((n - midm)/midp), 2);
+        ++n;
+    }
+    return w;
 }
 
 /// \f[
 /// w(n)=\begin{cases}
 /// 1 - 6\left(\frac{|n|}{N/2}\right)^2 + 6\left(\frac{|n|}{N/2}\right)^3
-/// & 0 \leq |n| \leq (N-1)/4
+/// & 0 \leq |n| \leq N/4
 /// \\ 2\left(1-\frac{|n|}{N/2}\right)^3
-/// & (N-1)/4 \lt |n| \le (N-1)/2
+/// & N/4 \lt |n| \le N/2
 /// \end{cases}
 /// \qquad -\frac{N-1}{2} \leq n \leq \frac{N-1}{2}
 /// \f]
 /// @image html window_parzen.png
-template<typename T = double>
-Fmap<T>
-parzen(size_t size, bool symm = true) {
-    T len = size;
-    bool odd = size & 1;
+template <class T>
+T& parzen(T&& w, bool symm) {
+    typedef typename T::value_type Tv;
+    Tv len = w.size();
+    bool odd = w.size() & 1;
     if (!symm && !odd) ++len;
-    T half = len / 2;
-    T quad = half / 2;
-    return Fmap<T>(size, [=](size_t index)->T {
-        T i = fabs(index + 0.5 - half);
+    Tv half = len / 2;
+    Tv quad = half / 2;
+    Tv n = 0;
+    for (auto &v : w) {
+        Tv i = fabs(n + 0.5 - half);
         if (i <= quad) {
-            return 1 -
+            v *= 1 -
             6 * pow((i/half), 2) +
             6 * pow((i/half), 3);
         } else {
-            return 2 * pow(1-(i/half), 3);
+            v *= 2 * pow(1-(i/half), 3);
         }
-    });
+        ++n;
+    }
+    return w;
 }
 
 /// \f[
@@ -180,20 +209,22 @@ parzen(size_t size, bool symm = true) {
 /// \qquad -1 \leq x \leq 1
 /// \f]
 /// @image html window_bohman.png
-template<typename T = double>
-Fmap<T>
-bohman(size_t size, bool symm = true) {
-    if (size==1) return Fmap<T>(size, [=](size_t index)->T {
-        return 1;
-    });
-    T len = size - 1;
-    bool odd = size & 1;
-    if (!symm && !odd) ++len;
-    return Fmap<T>(size, [=](size_t index)->T {
-        T x = fabs(index/(len/2) - 1);
-        if (x==1) return 0;
-        return (1 - x) * cos(pi<T>() * x) + 1.0 / pi<T>() * sin(pi<T>() * x);
-    });
+template <class T>
+T& bohman(T&& w, bool symm) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size() - 1;
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv half = len / 2;
+        Tv n = 0;
+        for (auto &v : w) {
+            Tv x = fabs(n/half - 1);
+            v *= (1 - x) * cos(pi<Tv>() * x) + 1.0 / pi<Tv>() * sin(pi<Tv>() * x);
+            ++n;
+        }
+    }
+    return w;
 }
 
 } /* namespace window */

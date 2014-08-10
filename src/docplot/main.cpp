@@ -23,7 +23,7 @@ using namespace std;
 using namespace dspp;
 
 #ifndef GNUPLOT_CMD
-#define GNUPLOT_CMD "gnuplot"
+#define GNUPLOT_CMD "/usr/local/bin/gnuplot"
 #endif
 
 #if defined(_WIN32)
@@ -77,7 +77,7 @@ public:
     }
 };
 
-void plot_window(function<Fmap<double>(size_t, bool)> fn, const char* name, const char* filename) {
+void plot_window(function<vector<double>(size_t, bool)> fn, const char* name, const char* filename) {
     Gnuplot p;
     auto w = fn(1025, true);
     auto aw = fn(8192, false);
@@ -153,11 +153,31 @@ int main() {
         exit(1);
     }
 
-    plot_window(window::rect<double>, "Rectangle", "rect");
-    plot_window(window::triang<double>, "Triangle", "triang");
-    plot_window(window::bartlett<double>, "Bartlett", "bartlett");
-    plot_window(window::hann<double>, "Hann", "hann");
-    plot_window(window::welch<double>, "Welch", "welch");
-    plot_window(window::parzen<double>, "Parzen", "parzen");
-    plot_window(window::bohman<double>, "Bohman", "bohman");
+    plot_window([](size_t size, bool symm) {
+        return window::rect(vector<double>(size,1), symm);
+    }, "Rectangle", "rect");
+
+    plot_window([](size_t size, bool symm) {
+        return window::triang(vector<double>(size,1), symm);
+    }, "Triangle", "triang");
+
+    plot_window([](size_t size, bool symm) {
+        return window::bartlett(vector<double>(size,1), symm);
+    }, "Bartlett", "bartlett");
+
+    plot_window([](size_t size, bool symm) {
+        return window::hann(vector<double>(size,1), symm);
+    }, "Hann", "hann");
+
+    plot_window([](size_t size, bool symm) {
+        return window::welch(vector<double>(size,1), symm);
+    }, "Welch", "welch");
+
+    plot_window([](size_t size, bool symm) {
+        return window::parzen(vector<double>(size,1), symm);
+    }, "Parzen", "parzen");
+
+    plot_window([](size_t size, bool symm) {
+        return window::bohman(vector<double>(size,1), symm);
+    }, "Bohman", "bohman");
 }
