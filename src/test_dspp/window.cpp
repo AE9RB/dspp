@@ -32,6 +32,11 @@ class Window : public testing::Test {
 protected:
 
     // convenience for development
+    void print(vector<T> &data) {
+        cout << "[";
+        for (auto i : data) cout << i << ", ";
+        cout << "]\n";
+    }
     void print(vector<T> &&data) {
         cout << "[";
         for (auto i : data) cout << i << ", ";
@@ -129,6 +134,19 @@ protected:
         }, 0, 0, 0.048302383742639676, 0);
     }
 
+    void chebyshev() {
+        vector<T> w;
+        w = window::chebyshev(vector<T>(1,1));
+        EXPECT_EQ((T)1, w[0]);
+        w = window::chebyshev(vector<T>(8,1));
+        EXPECT_EQ((T)0.03638368090334488, w[7]);
+        EXPECT_EQ((T)1, w[3]);
+        EXPECT_EQ((T)1, w[4]);
+        w = window::chebyshev(vector<T>(9,1));
+        EXPECT_EQ((T)0.021827407475211173, w[8]);
+        EXPECT_EQ((T)1, w[4]);
+    }
+
 };
 
 TEST_T(Window, double, rect);
@@ -138,3 +156,13 @@ TEST_T(Window, double, parzen);
 TEST_T(Window, double, triang);
 TEST_T(Window, double, bartlett);
 TEST_T(Window, double, bohman);
+TEST_T(Window, double, chebyshev);
+
+TEST_T(Window, float, rect);
+TEST_T(Window, float, hann);
+TEST_T(Window, float, welch);
+TEST_T(Window, float, parzen);
+TEST_T(Window, float, triang);
+TEST_T(Window, float, bartlett);
+TEST_T(Window, float, bohman);
+TEST_T(Window, float, chebyshev);

@@ -1386,7 +1386,7 @@ inline void dst(size_t n, T *data, int isgn = -1)
     FFT_Impl<T>::ddst(n, isgn, data);
 }
 
-/// Chirp-z transform. In-place unsafe version.
+/// Chirp z-transform. In-place unsafe version.
 template<typename T>
 void czt(size_t n, ::std::complex<T> *data, size_t m=0, ::std::complex<T> w=0, T a=1)
 {

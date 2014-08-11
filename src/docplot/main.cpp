@@ -116,7 +116,7 @@ void plot_window(function<vector<double>(size_t, bool)> fn, const char* name, co
     p.cmd("set ylabel offset 2.0,0.0");
     p.cmd("set linetype 1 lc rgb '#8B4513' lw 1.1");
 
-    p << "set title '" << name << " window'" << endl;
+    p << "set title '" << name << "'" << endl;
     p.cmd("set yrange [0.0:1.04]");
     p.cmd("set ytics autofreq 0,0.1");
     p.cmd("set ylabel 'amplitude'");
@@ -155,29 +155,34 @@ int main() {
 
     plot_window([](size_t size, bool symm) {
         return window::rect(vector<double>(size,1), symm);
-    }, "Rectangle", "rect");
+    }, "Rectangle window", "rect");
 
     plot_window([](size_t size, bool symm) {
         return window::triang(vector<double>(size,1), symm);
-    }, "Triangle", "triang");
+    }, "Triangle window", "triang");
 
     plot_window([](size_t size, bool symm) {
         return window::bartlett(vector<double>(size,1), symm);
-    }, "Bartlett", "bartlett");
+    }, "Bartlett window", "bartlett");
 
     plot_window([](size_t size, bool symm) {
         return window::hann(vector<double>(size,1), symm);
-    }, "Hann", "hann");
+    }, "Hann window", "hann");
 
     plot_window([](size_t size, bool symm) {
         return window::welch(vector<double>(size,1), symm);
-    }, "Welch", "welch");
+    }, "Welch window", "welch");
 
     plot_window([](size_t size, bool symm) {
         return window::parzen(vector<double>(size,1), symm);
-    }, "Parzen", "parzen");
+    }, "Parzen window", "parzen");
 
     plot_window([](size_t size, bool symm) {
         return window::bohman(vector<double>(size,1), symm);
-    }, "Bohman", "bohman");
+    }, "Bohman window", "bohman");
+
+    plot_window([](size_t size, bool symm) {
+        return window::chebyshev(vector<double>(size,1));
+    }, "Chebyshev window (100dB)", "chebyshev");
+
 }

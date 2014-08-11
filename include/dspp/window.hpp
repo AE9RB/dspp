@@ -18,7 +18,9 @@
 #define DSPP_WINDOW_HPP
 
 #include <cmath>
+#include <vector>
 #include "util.hpp"
+#include "fft.hpp"
 
 namespace dspp {
 /// @brief Window functions (also known as an apodization functions or
@@ -47,7 +49,7 @@ namespace dspp {
 /// <h2 class="groupheader"> Function Prototype</h2>
 /// <tt>\#include <dspp/window.hpp></tt>
 ///
-/// All window functions have the same prototype.
+/// Window functions have the same prototype.
 /// @retval T& A reference to the container that was windowed.
 /// @param w A container of data for application of the window. To get the
 ///          window coefficients supply a container full of 1s. The container
@@ -75,7 +77,7 @@ namespace window {
 /// \f]
 /// @image html window_rect.png
 template <class T>
-T& rect(T&& w, bool symm) {
+T& rect(T&& w, bool symm=true) {
     return w;
 }
 
@@ -91,7 +93,7 @@ T& rect(T&& w, bool symm) {
 /// \f]
 /// @image html window_triang.png
 template <class T>
-T& triang(T&& w, bool symm) {
+T& triang(T&& w, bool symm=true) {
     typedef typename T::value_type Tv;
     Tv len = w.size();
     bool odd = w.size() & 1;
@@ -113,7 +115,7 @@ T& triang(T&& w, bool symm) {
 /// \f]
 /// @image html window_bartlett.png
 template <class T>
-T& bartlett(T&& w, bool symm) {
+T& bartlett(T&& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -135,7 +137,7 @@ T& bartlett(T&& w, bool symm) {
 /// \f]
 /// @image html window_hann.png
 template <class T>
-T& hann(T&& w, bool symm) {
+T& hann(T&& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size() - 1;
@@ -156,7 +158,7 @@ T& hann(T&& w, bool symm) {
 /// \f]
 /// @image html window_welch.png
 template <class T>
-T& welch(T&& w, bool symm) {
+T& welch(T&& w, bool symm=true) {
     typedef typename T::value_type Tv;
     Tv len = w.size();
     bool odd = w.size() & 1;
@@ -182,7 +184,7 @@ T& welch(T&& w, bool symm) {
 /// \f]
 /// @image html window_parzen.png
 template <class T>
-T& parzen(T&& w, bool symm) {
+T& parzen(T&& w, bool symm=true) {
     typedef typename T::value_type Tv;
     Tv len = w.size();
     bool odd = w.size() & 1;
@@ -210,7 +212,7 @@ T& parzen(T&& w, bool symm) {
 /// \f]
 /// @image html window_bohman.png
 template <class T>
-T& bohman(T&& w, bool symm) {
+T& bohman(T&& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size() - 1;
@@ -222,6 +224,48 @@ T& bohman(T&& w, bool symm) {
             Tv x = fabs(n/half - 1);
             v *= (1 - x) * cos(pi<Tv>() * x) + 1.0 / pi<Tv>() * sin(pi<Tv>() * x);
             ++n;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// W(k) = \frac
+/// {\cos\{N \cos^{-1}[\beta \cos(\frac{\pi k}{N})]\}}
+/// {\cosh[N \cosh^{-1}(\beta)]}
+/// \qquad
+/// \beta = \cosh \left [\frac{1}{N} \cosh^{-1}(10^\frac{A}{20}) \right ]
+/// \qquad -1 \leq x \leq 1
+/// \f]
+/// @image html window_chebyshev.png
+template <class T>
+T& chebyshev(T&& w, typename T::value_type att = 100) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        size_t len = w.size();
+        bool odd = w.size() & 1;
+        size_t order = len - 1.0;
+        Tv beta = cosh(1.0 / order * acosh(pow(10, (abs(att) / 20))));
+        ::std::vector<::std::complex<Tv>> k(len);
+        for (size_t i = 0; i < len; ++i) {
+            Tv x = beta * cos(pi<Tv>() * i / len);
+            if (x>1) x = cosh(order * acosh(x));
+            else if (x<-1) x = (1.0 - 2.0 * (order % 2)) * cosh(order * acosh(-x));
+            else x =  cos(order * acos(x));
+            if (odd)
+                k[i] = x;
+            else
+                k[i] = x * exp(::std::complex<Tv>(0, pi<Tv>() / len * i));
+        }
+        if (!(len & (len-1))) FFT::dft(k);
+        else FFT::czt(k.size(), k.data());
+        size_t n = len / 2 + 1;
+        Tv d;
+        if (odd) d = k[0].real();
+        else d = k[1].real();
+        for (auto &v : w) {
+            v *= k[n].real() / d;
+            if (++n >= len) n = 0;
         }
     }
     return w;
