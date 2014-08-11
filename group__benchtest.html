@@ -324,12 +324,12 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group
 <div class="line">    <span class="keywordtype">void</span> <a class="code" href="group__benchtest.html#ga8b38992669fb844864807cf32e416853">SetUp</a>() {</div>
 <div class="line">        <span class="comment">/* Data loaded with a control set here */</span></div>
 <div class="line">    }</div>
-<div class="line">    <span class="keywordtype">void</span> <a class="code" href="namespacedspp_1_1_f_f_t.html#ae35966a1227181fec9241c30b6dbcb49">dft</a>() {</div>
-<div class="line">        <a class="code" href="namespacedspp_1_1_f_f_t.html#ae35966a1227181fec9241c30b6dbcb49">dspp::FFT::dft</a>(data);</div>
+<div class="line">    <span class="keywordtype">void</span> <a class="code" href="namespacedspp_1_1_f_f_t.html#adc8a72facb1d20bcd6dfbc672b682586">dft</a>() {</div>
+<div class="line">        <a class="code" href="namespacedspp_1_1_f_f_t.html#adc8a72facb1d20bcd6dfbc672b682586">dspp::FFT::dft</a>(data);</div>
 <div class="line">        <span class="comment">/* Results validated here */</span></div>
 <div class="line">    }</div>
-<div class="line">    <span class="keywordtype">void</span> <a class="code" href="namespacedspp_1_1_f_f_t.html#a68d9d4f251e4667a3e7d1904f8074584">idft</a>() {</div>
-<div class="line">        <a class="code" href="namespacedspp_1_1_f_f_t.html#a68d9d4f251e4667a3e7d1904f8074584">dspp::FFT::idft</a>(data);</div>
+<div class="line">    <span class="keywordtype">void</span> idft() {</div>
+<div class="line">        dspp::FFT::idft(data);</div>
 <div class="line">        <span class="comment">/* Results validated here */</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
@@ -417,14 +417,14 @@ template&lt;typename T &gt; </div>
 <div class="line"><a class="code" href="group__benchtest.html#gad8b332753515c0ab8baada563c2547eb">TEST</a>(FFT, performance64){</div>
 <div class="line">    std::array&lt;std::complex&lt;float&gt;,64&gt; data;</div>
 <div class="line">    <span class="keywordflow">while</span>(<a class="code" href="group__benchtest.html#gaed39aa5cdb4be21f0a4eddb3deee1172">Benchmark</a>()) {</div>
-<div class="line">       <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0; i&lt;100; ++i) <a class="code" href="namespacedspp_1_1_f_f_t.html#ae35966a1227181fec9241c30b6dbcb49">dspp::FFT::dft</a>(data);</div>
+<div class="line">       <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=0; i&lt;100; ++i) <a class="code" href="namespacedspp_1_1_f_f_t.html#adc8a72facb1d20bcd6dfbc672b682586">dspp::FFT::dft</a>(data);</div>
 <div class="line">    }</div>
 <div class="line">}</div>
 <div class="line"><span class="comment">/* Run a large FFT one time... */</span></div>
 <div class="line"><a class="code" href="group__benchtest.html#gad8b332753515c0ab8baada563c2547eb">TEST</a>(FFT, performance8192){</div>
 <div class="line">    std::array&lt;std::complex&lt;float&gt;,8192&gt; data;</div>
 <div class="line">    <span class="keywordflow">while</span>(<a class="code" href="group__benchtest.html#gaed39aa5cdb4be21f0a4eddb3deee1172">Benchmark</a>()) {</div>
-<div class="line">       <a class="code" href="namespacedspp_1_1_f_f_t.html#ae35966a1227181fec9241c30b6dbcb49">dspp::FFT::dft</a>(data);</div>
+<div class="line">       <a class="code" href="namespacedspp_1_1_f_f_t.html#adc8a72facb1d20bcd6dfbc672b682586">dspp::FFT::dft</a>(data);</div>
 <div class="line">    }</div>
 <div class="line">}</div>
 </div><!-- fragment --> 

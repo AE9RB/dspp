@@ -116,65 +116,136 @@ $(document).ready(function(){initNavTree('namespacedspp_1_1_f_f_t.html','');});
 </div><!--header-->
 <div class="contents">
 
-<p>Fast Fourier Transforms.  
+<p>Fast Fourier/Cosine/Sine Transforms.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae35966a1227181fec9241c30b6dbcb49"><td class="memTemplParams" colspan="2"><a class="anchor" id="ae35966a1227181fec9241c30b6dbcb49"></a>
+<tr class="memitem:adc8a72facb1d20bcd6dfbc672b682586"><td class="memTemplParams" colspan="2"><a class="anchor" id="adc8a72facb1d20bcd6dfbc672b682586"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:adc8a72facb1d20bcd6dfbc672b682586"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#adc8a72facb1d20bcd6dfbc672b682586">dft</a> (size_t n,::std::complex&lt; T &gt; *data, int isgn=-1)</td></tr>
+<tr class="memdesc:adc8a72facb1d20bcd6dfbc672b682586"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complex discrete Fourier transform. In-place unsafe version. <br /></td></tr>
+<tr class="separator:adc8a72facb1d20bcd6dfbc672b682586"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc65085197b437e74f934f28753fb54c"><td class="memTemplParams" colspan="2"><a class="anchor" id="acc65085197b437e74f934f28753fb54c"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:acc65085197b437e74f934f28753fb54c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#acc65085197b437e74f934f28753fb54c">dft</a> (size_t insize, const ::std::complex&lt; T &gt; *in,::std::complex&lt; T &gt; *out, int isgn=-1)</td></tr>
+<tr class="memdesc:acc65085197b437e74f934f28753fb54c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complex discrete Fourier transform. Out-of-place unsafe version. <br /></td></tr>
+<tr class="separator:acc65085197b437e74f934f28753fb54c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b1b1f2c95ade042e95e9477e6be3bee"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a7b1b1f2c95ade042e95e9477e6be3bee"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#a7b1b1f2c95ade042e95e9477e6be3bee">dft</a> (size_t n, T *data, int isgn=-1)</td></tr>
+<tr class="memdesc:a7b1b1f2c95ade042e95e9477e6be3bee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Real discrete Fourier transform. In-place unsafe version.  <a href="#a7b1b1f2c95ade042e95e9477e6be3bee">More...</a><br /></td></tr>
+<tr class="separator:a7b1b1f2c95ade042e95e9477e6be3bee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae777351863cd2bf8fe5dd3533fa7175d"><td class="memTemplParams" colspan="2"><a class="anchor" id="ae777351863cd2bf8fe5dd3533fa7175d"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ae777351863cd2bf8fe5dd3533fa7175d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#ae777351863cd2bf8fe5dd3533fa7175d">dft</a> (size_t insize, const T *in,::std::complex&lt; T &gt; *out, int unused=0)</td></tr>
+<tr class="memdesc:ae777351863cd2bf8fe5dd3533fa7175d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Real to complex discrete Fourier transform. Out-of-place unsafe version. <br /></td></tr>
+<tr class="separator:ae777351863cd2bf8fe5dd3533fa7175d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4ce98039816483cc0a21c0c4ddacd11"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa4ce98039816483cc0a21c0c4ddacd11"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:aa4ce98039816483cc0a21c0c4ddacd11"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#aa4ce98039816483cc0a21c0c4ddacd11">dft</a> (size_t insize, const ::std::complex&lt; T &gt; *in, T *out, int unused=0)</td></tr>
+<tr class="memdesc:aa4ce98039816483cc0a21c0c4ddacd11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complex to real discrete Fourier transform. Out-of-place unsafe version. <br /></td></tr>
+<tr class="separator:aa4ce98039816483cc0a21c0c4ddacd11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11dd748c7913e07ac6128c3e5a13f4c7"><td class="memTemplParams" colspan="2"><a class="anchor" id="a11dd748c7913e07ac6128c3e5a13f4c7"></a>
 template&lt;typename T , size_t N&gt; </td></tr>
-<tr class="memitem:ae35966a1227181fec9241c30b6dbcb49"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#ae35966a1227181fec9241c30b6dbcb49">dft</a> (std::array&lt; std::complex&lt; T &gt;, N &gt; &amp;data)</td></tr>
-<tr class="memdesc:ae35966a1227181fec9241c30b6dbcb49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete Fourier transform. <br /></td></tr>
-<tr class="separator:ae35966a1227181fec9241c30b6dbcb49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9e99911c1b2e55e4541baf91bee55fc"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa9e99911c1b2e55e4541baf91bee55fc"></a>
-template&lt;typename T , size_t N&gt; </td></tr>
-<tr class="memitem:aa9e99911c1b2e55e4541baf91bee55fc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#aa9e99911c1b2e55e4541baf91bee55fc">dft</a> (const std::array&lt; std::complex&lt; T &gt;, N &gt; &amp;in, std::array&lt; std::complex&lt; T &gt;, N &gt; &amp;out)</td></tr>
-<tr class="memdesc:aa9e99911c1b2e55e4541baf91bee55fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete Fourier transform. <br /></td></tr>
-<tr class="separator:aa9e99911c1b2e55e4541baf91bee55fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64631286760e269366ec74835916b53f"><td class="memTemplParams" colspan="2"><a class="anchor" id="a64631286760e269366ec74835916b53f"></a>
-template&lt;typename T , size_t N&gt; </td></tr>
-<tr class="memitem:a64631286760e269366ec74835916b53f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#a64631286760e269366ec74835916b53f">dft</a> (std::complex&lt; T &gt;(&amp;data)[N])</td></tr>
-<tr class="memdesc:a64631286760e269366ec74835916b53f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete Fourier transform. <br /></td></tr>
-<tr class="separator:a64631286760e269366ec74835916b53f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adff75e013daa71640fa751512e03572a"><td class="memTemplParams" colspan="2"><a class="anchor" id="adff75e013daa71640fa751512e03572a"></a>
-template&lt;typename T , size_t N&gt; </td></tr>
-<tr class="memitem:adff75e013daa71640fa751512e03572a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#adff75e013daa71640fa751512e03572a">dft</a> (const std::complex&lt; T &gt;(&amp;in)[N], std::complex&lt; T &gt;(&amp;out)[N])</td></tr>
-<tr class="memdesc:adff75e013daa71640fa751512e03572a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete Fourier transform. <br /></td></tr>
-<tr class="separator:adff75e013daa71640fa751512e03572a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68d9d4f251e4667a3e7d1904f8074584"><td class="memTemplParams" colspan="2"><a class="anchor" id="a68d9d4f251e4667a3e7d1904f8074584"></a>
-template&lt;typename T , size_t N&gt; </td></tr>
-<tr class="memitem:a68d9d4f251e4667a3e7d1904f8074584"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#a68d9d4f251e4667a3e7d1904f8074584">idft</a> (std::array&lt; std::complex&lt; T &gt;, N &gt; &amp;data)</td></tr>
-<tr class="memdesc:a68d9d4f251e4667a3e7d1904f8074584"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse discrete Fourier transform. <br /></td></tr>
-<tr class="separator:a68d9d4f251e4667a3e7d1904f8074584"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1f394ba2470d489361ddc123f353164"><td class="memTemplParams" colspan="2"><a class="anchor" id="ab1f394ba2470d489361ddc123f353164"></a>
-template&lt;typename T , size_t N&gt; </td></tr>
-<tr class="memitem:ab1f394ba2470d489361ddc123f353164"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#ab1f394ba2470d489361ddc123f353164">idft</a> (const std::array&lt; std::complex&lt; T &gt;, N &gt; &amp;in, std::array&lt; std::complex&lt; T &gt;, N &gt; &amp;out)</td></tr>
-<tr class="memdesc:ab1f394ba2470d489361ddc123f353164"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse discrete Fourier transform. <br /></td></tr>
-<tr class="separator:ab1f394ba2470d489361ddc123f353164"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac82e09ffa57a7dd909832b7938ffcb8f"><td class="memTemplParams" colspan="2"><a class="anchor" id="ac82e09ffa57a7dd909832b7938ffcb8f"></a>
-template&lt;typename T , size_t N&gt; </td></tr>
-<tr class="memitem:ac82e09ffa57a7dd909832b7938ffcb8f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#ac82e09ffa57a7dd909832b7938ffcb8f">idft</a> (std::complex&lt; T &gt;(&amp;data)[N])</td></tr>
-<tr class="memdesc:ac82e09ffa57a7dd909832b7938ffcb8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse discrete Fourier transform. <br /></td></tr>
-<tr class="separator:ac82e09ffa57a7dd909832b7938ffcb8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcc3bff9848cc38d832901804f1d0440"><td class="memTemplParams" colspan="2"><a class="anchor" id="adcc3bff9848cc38d832901804f1d0440"></a>
-template&lt;typename T , size_t N&gt; </td></tr>
-<tr class="memitem:adcc3bff9848cc38d832901804f1d0440"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#adcc3bff9848cc38d832901804f1d0440">idft</a> (const std::complex&lt; T &gt;(&amp;in)[N], std::complex&lt; T &gt;(&amp;out)[N])</td></tr>
-<tr class="memdesc:adcc3bff9848cc38d832901804f1d0440"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse discrete Fourier transform. <br /></td></tr>
-<tr class="separator:adcc3bff9848cc38d832901804f1d0440"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11dd748c7913e07ac6128c3e5a13f4c7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#a11dd748c7913e07ac6128c3e5a13f4c7">dft</a> (T(&amp;data)[N], int isgn=-1)</td></tr>
+<tr class="memdesc:a11dd748c7913e07ac6128c3e5a13f4c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete Fourier transform. In-place for C-style array. <br /></td></tr>
+<tr class="separator:a11dd748c7913e07ac6128c3e5a13f4c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50e3a27f87145f25f34ae2fd6727ef46"><td class="memTemplParams" colspan="2"><a class="anchor" id="a50e3a27f87145f25f34ae2fd6727ef46"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a50e3a27f87145f25f34ae2fd6727ef46"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#a50e3a27f87145f25f34ae2fd6727ef46">dft</a> (T &amp;data, int isgn=-1)</td></tr>
+<tr class="memdesc:a50e3a27f87145f25f34ae2fd6727ef46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete Fourier transform. In-place for STL container. <br /></td></tr>
+<tr class="separator:a50e3a27f87145f25f34ae2fd6727ef46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f2e6429f4ad201c766b19722410d582"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1f2e6429f4ad201c766b19722410d582"></a>
+template&lt;typename T1 , size_t N1, typename T2 , size_t N2&gt; </td></tr>
+<tr class="memitem:a1f2e6429f4ad201c766b19722410d582"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#a1f2e6429f4ad201c766b19722410d582">dft</a> (const T1(&amp;in)[N1], T2(&amp;out)[N2], int isgn=-1)</td></tr>
+<tr class="memdesc:a1f2e6429f4ad201c766b19722410d582"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete Fourier transform. Out-of-place for C-style arrays. <br /></td></tr>
+<tr class="separator:a1f2e6429f4ad201c766b19722410d582"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f4baa826c087451ad0b11adaf3eb5b0"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1f4baa826c087451ad0b11adaf3eb5b0"></a>
+template&lt;typename T1 , typename T2 &gt; </td></tr>
+<tr class="memitem:a1f4baa826c087451ad0b11adaf3eb5b0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#a1f4baa826c087451ad0b11adaf3eb5b0">dft</a> (const T1 &amp;in, T2 &amp;out, int isgn=-1)</td></tr>
+<tr class="memdesc:a1f4baa826c087451ad0b11adaf3eb5b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete Fourier transform. Out-of-place for STL containers. <br /></td></tr>
+<tr class="separator:a1f4baa826c087451ad0b11adaf3eb5b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac9494411c2cec2f1d9f79691571288b"><td class="memTemplParams" colspan="2"><a class="anchor" id="aac9494411c2cec2f1d9f79691571288b"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:aac9494411c2cec2f1d9f79691571288b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#aac9494411c2cec2f1d9f79691571288b">dct</a> (size_t n, T *data, int isgn=-1)</td></tr>
+<tr class="memdesc:aac9494411c2cec2f1d9f79691571288b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete cosine transform. In-place unsafe version. <br /></td></tr>
+<tr class="separator:aac9494411c2cec2f1d9f79691571288b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4676c8ac4969a0bd437511d562677cf4"><td class="memTemplParams" colspan="2"><a class="anchor" id="a4676c8ac4969a0bd437511d562677cf4"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a4676c8ac4969a0bd437511d562677cf4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#a4676c8ac4969a0bd437511d562677cf4">dst</a> (size_t n, T *data, int isgn=-1)</td></tr>
+<tr class="memdesc:a4676c8ac4969a0bd437511d562677cf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discrete sine transform. In-place unsafe version. <br /></td></tr>
+<tr class="separator:a4676c8ac4969a0bd437511d562677cf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c097fadf18e24e16ddfde9b677ed312"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1c097fadf18e24e16ddfde9b677ed312"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a1c097fadf18e24e16ddfde9b677ed312"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedspp_1_1_f_f_t.html#a1c097fadf18e24e16ddfde9b677ed312">czt</a> (size_t n,::std::complex&lt; T &gt; *data, size_t m=0,::std::complex&lt; T &gt; w=0, T a=1)</td></tr>
+<tr class="memdesc:a1c097fadf18e24e16ddfde9b677ed312"><td class="mdescLeft">&#160;</td><td class="mdescRight">Chirp z-transform. In-place unsafe version. <br /></td></tr>
+<tr class="separator:a1c097fadf18e24e16ddfde9b677ed312"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Fast Fourier Transforms. </p>
-<p class="formulaDsp">
-\[ X_k = \sum_{n=0}^{N-1} x_n e^{-{i 2\pi k \frac{n}{N}}} \qquad k = 0,\dots,N-1 \]
-</p>
-<p>Performs a discrete Fourier transform on arrays with power-of-two sizes. Uses a radix-4 decimation in time algorithm with a time complexity of approximately \( \Theta(3/8N \log_2 (N)) \). Unlike most other FFT implementations, no planning step is necessary.</p>
-<p>Example usage: </p><pre class="fragment">std::array&lt;std::complex&lt;float&gt;,512&gt; data;
+<div class="textblock"><p>Fast Fourier/Cosine/Sine Transforms. </p>
+<p>Performs a transform on arrays with power-of-two sizes. Uses Sande-Tukey decimation in frequency algorithm.</p>
+<p>Example usage: </p><pre class="fragment">std::vector&lt;std::complex&lt;float&gt;&gt; data(512);
 dspp::FFT::dft(data);
 </pre><p>C-style arrays are supported: </p><pre class="fragment">std::complex&lt;float&gt; data[512];
-dspp::FFT::dft(data);
-</pre><p>Out-of-place transform: </p><pre class="fragment">std::array&lt;std::complex&lt;double&gt;,64&gt; in;
-std::array&lt;std::complex&lt;double&gt;,64&gt; out;
-dspp::FFT::dft(in, out);</pre> </div></div><!-- contents -->
+dspp::FFT::dft(data, 1); // 1 = inverse DFT
+</pre><p>Out-of-place transform: </p><pre class="fragment">std::array&lt;double,64&gt; in;
+std::array&lt;std::complex&lt;double&gt;,32&gt; out;
+dspp::FFT::dft(in, out); // real transform
+</pre><p>Planning is automatically performed as necessary. The first transform of a specific size and type will take longer than subsequent transforms.</p>
+<p>Each of the transform types has an unsafe version. If possible, always use the convenience overloads which engage the type safety of your compiler. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="a7b1b1f2c95ade042e95e9477e6be3bee"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dspp::FFT::dft </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>isgn</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Real discrete Fourier transform. In-place unsafe version. </p>
+<p>Value for data[n].real() is packed in data[0].imag(). </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">isgn</td><td>-1 is real to complex.<br />
+ 1 is complex to real. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

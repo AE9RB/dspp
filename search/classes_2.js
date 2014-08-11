@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['info',['Info',['../classtesting_1_1_info.html',1,'testing']]]
+  ['mixer',['Mixer',['../structdspp_1_1_mixer.html',1,'dspp']]]
 ];

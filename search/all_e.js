@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['scoped_5ftrace',['SCOPED_TRACE',['../group__benchtest__assert.html#ga5ae70834ecc3308187dc8717a83342d5',1,'asserter.hpp']]],
-  ['setup',['SetUp',['../group__benchtest.html#ga8b38992669fb844864807cf32e416853',1,'testing::Test']]],
-  ['setuptestcase',['SetUpTestCase',['../group__benchtest.html#ga5ccbac42fee8c5b00b0bfe89b6c49d79',1,'testing::Test']]],
-  ['start',['Start',['../classtesting_1_1_reporter.html#a2cde6aa3ce4e4ba7f038d9d4681e5e46',1,'testing::Reporter::Start()'],['../classtesting_1_1_default_reporter.html#ac4421b2371934e4a303350b438c6d111',1,'testing::DefaultReporter::Start()']]],
-  ['startcase',['StartCase',['../classtesting_1_1_reporter.html#ad2cfbc485f05c3d87566c5a07039fcdd',1,'testing::Reporter::StartCase()'],['../classtesting_1_1_default_reporter.html#a7afadeea7784de4f964101dbd4c78c8a',1,'testing::DefaultReporter::StartCase()']]],
-  ['std',['std',['../namespacestd.html',1,'']]]
+  ['parzen',['parzen',['../namespacedspp_1_1window.html#aff89e847233203d4f60234813bf1440d',1,'dspp::window']]],
+  ['pass',['Pass',['../classtesting_1_1_reporter.html#a849ebfea61e03bb7d8c1acaf786004fa',1,'testing::Reporter::Pass()'],['../classtesting_1_1_default_reporter.html#a0a5df07f9dc6c03034d9c27ee9e54539',1,'testing::DefaultReporter::Pass()']]],
+  ['pi',['pi',['../namespacedspp.html#af103d72a02ba828fb728131a2f49a807',1,'dspp']]],
+  ['pluralize',['Pluralize',['../classtesting_1_1_default_reporter.html#a1bb57ae9c91af64178dd5515248e2256',1,'testing::DefaultReporter']]],
+  ['print',['Print',['../classtesting_1_1_reporter.html#a4b529e5beaea0cb2f0c86c3a7dcff910',1,'testing::Reporter::Print()'],['../classtesting_1_1_default_reporter.html#ae33fd38c89dd76e2abbcc264e0dfa379',1,'testing::DefaultReporter::Print()']]],
+  ['printto',['PrintTo',['../group__benchtest.html#ga91b9416043925d4c6690e5d85d338204',1,'testing']]],
+  ['printtostring',['PrintToString',['../group__benchtest.html#gaa4db3774119b990000f357fc224540db',1,'testing']]]
 ];
