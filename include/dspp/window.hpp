@@ -21,6 +21,7 @@
 #include <vector>
 #include "util.hpp"
 #include "fft.hpp"
+#include "bessel.hpp"
 
 namespace dspp {
 /// @brief Window functions (also known as an apodization functions or
@@ -73,7 +74,7 @@ namespace dspp {
 namespace window {
 
 /// \f[
-/// w(n)=1
+/// w(n)=1 \qquad 0 \leq n \leq N-1
 /// \f]
 /// @image html window_rect.png
 template <class T>
@@ -196,8 +197,8 @@ T& parzen(T&& w, bool symm=true) {
         Tv i = fabs(n + 0.5 - half);
         if (i <= quad) {
             v *= 1 -
-            6 * pow((i/half), 2) +
-            6 * pow((i/half), 3);
+                 6 * pow((i/half), 2) +
+                 6 * pow((i/half), 3);
         } else {
             v *= 2 * pow(1-(i/half), 3);
         }
@@ -207,8 +208,8 @@ T& parzen(T&& w, bool symm=true) {
 }
 
 /// \f[
-/// w(x) = (1-|x|)cos(\pi\left|x\right|)+\frac{1}{\pi}sin(\pi\left|x\right|)
-/// \qquad -1 \leq x \leq 1
+/// w(n) = (1-|n|)cos(\pi\left|n\right|)+\frac{1}{\pi}sin(\pi\left|n\right|)
+/// \qquad -1 \leq n \leq 1
 /// \f]
 /// @image html window_bohman.png
 template <class T>
@@ -230,22 +231,22 @@ T& bohman(T&& w, bool symm=true) {
 }
 
 /// \f[
-/// W(k) = \frac
+/// W(n) = \frac
 /// {\cos\{N \cos^{-1}[\beta \cos(\frac{\pi k}{N})]\}}
 /// {\cosh[N \cosh^{-1}(\beta)]}
 /// \qquad
-/// \beta = \cosh \left [\frac{1}{N} \cosh^{-1}(10^\frac{A}{20}) \right ]
-/// \qquad -1 \leq x \leq 1
+/// \beta = \cosh \left [\frac{1}{N} \cosh^{-1}(10^\frac{a}{20}) \right ]
+/// \qquad -1 \leq n \leq 1
 /// \f]
 /// @image html window_chebyshev.png
 template <class T>
-T& chebyshev(T&& w, typename T::value_type att = 100) {
+T& chebyshev(T&& w, typename T::value_type a = 100) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         size_t len = w.size();
         bool odd = w.size() & 1;
         size_t order = len - 1.0;
-        Tv beta = cosh(1.0 / order * acosh(pow(10, (abs(att) / 20))));
+        Tv beta = cosh(1.0 / order * acosh(pow(10, (abs(a) / 20))));
         ::std::vector<::std::complex<Tv>> k(len);
         for (size_t i = 0; i < len; ++i) {
             Tv x = beta * cos(pi<Tv>() * i / len);
@@ -266,6 +267,221 @@ T& chebyshev(T&& w, typename T::value_type att = 100) {
         for (auto &v : w) {
             v *= k[n].real() / d;
             if (++n >= len) n = 0;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// w(n) = 0.42 - 0.5 \cos\left(\frac{2\pi n}{N-1}\right) +
+/// 0.08 \cos\left(\frac{4\pi n}{N-1}\right)
+/// \qquad 0 \leq n \leq N-1
+/// \f]
+/// @image html window_blackman.png
+template <class T>
+T& blackman(T&& w, bool symm=true) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv n = 0;
+        for (auto &v : w) {
+            v *= 0.42 - 0.5 * cos(2.0 * pi<Tv>() * n / (len - 1)) +
+                 0.08 * cos(4.0 * pi<Tv>() * n / (len - 1));
+            ++n;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// w(n)=a_0 - a_1 \cos \left ( \frac{2 \pi n}{N-1} \right)+ a_2 \cos \left
+/// ( \frac{4 \pi n}{N-1} \right)- a_3 \cos \left ( \frac{6 \pi n}{N-1} \right)
+/// \qquad 0 \leq n \leq N-1
+/// \\ a_0=0.355768;\quad a_1=0.487396;\quad a_2=0.144232;\quad a_3=0.012604
+/// \f]
+/// @image html window_nuttall.png
+template <class T>
+T& nuttall(T&& w, bool symm=true) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv n = 0;
+        for (auto &v : w) {
+            v *= 0.355768 - 0.487396 * cos(2.0 * pi<Tv>() * n / (len - 1)) +
+                 0.144232 * cos(4.0 * pi<Tv>() * n / (len - 1)) -
+                 0.012604 * cos(6.0 * pi<Tv>() * n / (len - 1));
+            ++n;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// w(n)=a_0 - a_1 \cos \left ( \frac{2 \pi n}{N-1} \right)+ a_2 \cos \left
+/// ( \frac{4 \pi n}{N-1} \right)- a_3 \cos \left ( \frac{6 \pi n}{N-1} \right)
+/// \qquad 0 \leq n \leq N-1
+/// \\ a_0=0.3635819;\quad a_1=0.4891775;\quad a_2=0.1365995;\quad a_3=0.0106411
+/// \f]
+/// @image html window_blackmannuttall.png
+template <class T>
+T& blackmannuttall(T&& w, bool symm=true) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv n = 0;
+        for (auto &v : w) {
+            v *= 0.3635819 - 0.4891775 * cos(2.0 * pi<Tv>() * n / (len - 1)) +
+                 0.1365995 * cos(4.0 * pi<Tv>() * n / (len - 1)) -
+                 0.0106411 * cos(6.0 * pi<Tv>() * n / (len - 1));
+            ++n;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// w(n)=a_0 - a_1 \cos \left ( \frac{2 \pi n}{N-1} \right)+ a_2 \cos \left
+/// ( \frac{4 \pi n}{N-1} \right)- a_3 \cos \left ( \frac{6 \pi n}{N-1} \right)
+/// \qquad 0 \leq n \leq N-1
+/// \\ a_0=0.35875;\quad a_1=0.48829;\quad a_2=0.14128;\quad a_3=0.01168
+/// \f]
+/// @image html window_blackmanharris.png
+template <class T>
+T& blackmanharris(T&& w, bool symm=true) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv n = 0;
+        for (auto &v : w) {
+            v *= 0.35875 - 0.48829 * cos(2.0 * pi<Tv>() * n / (len - 1)) +
+                 0.14128 * cos(4.0 * pi<Tv>() * n / (len - 1)) -
+                 0.01168 * cos(6.0 * pi<Tv>() * n / (len - 1));
+            ++n;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// w(n)=a_0 - a_1 \cos \left ( \frac{2 \pi n}{N-1} \right)+ a_2 \cos \left
+/// ( \frac{4 \pi n}{N-1} \right)- a_3 \cos \left ( \frac{6 \pi n}{N-1} \right)
+/// + a_4 \cos \left ( \frac{8 \pi n}{N-1} \right)
+/// \qquad 0 \leq n \leq N-1
+/// \\ a_0=0.21557895;\quad a_1=0.41663158;\quad a_2=0.277263158;\quad a_3=0.083578947;\quad a_4=0.006947368
+/// \f]
+/// @image html window_flattop.png
+template <class T>
+T& flattop(T&& w, bool symm=true) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv n = 0;
+        for (auto &v : w) {
+            v *= 0.21557895 - 0.41663158 * cos(2.0 * pi<Tv>() * n / (len - 1)) +
+                 0.277263158 * cos(4.0 * pi<Tv>() * n / (len - 1)) -
+                 0.083578947 * cos(6.0 * pi<Tv>() * n / (len - 1)) +
+                 0.006947368 * cos(8.0 * pi<Tv>() * n / (len - 1));
+            ++n;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// w(n)=0.62 - 0.48 \left |\frac{n}{N-1}-\frac{1}{2} \right|
+/// - 0.38 \cos \left (\frac{2 \pi n}{N-1}\right )
+/// \qquad 0 \leq n \leq N-1
+/// \f]
+/// @image html window_barthann.png
+template <class T>
+T& barthann(T&& w, bool symm=true) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv n = 0;
+        for (auto &v : w) {
+            Tv fac = fabs(n / (len - 1.0) - 0.5);
+            v *= 0.62 - 0.48 * fac + 0.38 * cos(2 * pi<Tv>() * fac);
+            ++n;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// w(n) = 0.54 - 0.46 \cos\left(\frac{2\pi{n}}{M-1}\right)
+/// \qquad 0 \leq n \leq N-1
+/// \f]
+/// @image html window_hamming.png
+template <class T>
+T& hamming(T&& w, bool symm=true) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv n = 0;
+        for (auto &v : w) {
+            v *= 0.54 - 0.46 * cos(2.0 * pi<Tv>() * n / (len - 1));
+            ++n;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// w(n) = \frac{I_0\left( \beta \sqrt{1-\frac{4n^2}{(N-1)^2}} \right)}
+///        {I_0(\beta)}
+/// \qquad 0 \leq n \leq N-1
+/// \f]
+/// @image html window_kaiser.png
+template <class T>
+T& kaiser(T&& w, typename T::value_type beta=10, bool symm=true) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv alpha = (len - 1) / 2.0;
+        Tv d = bessel::i0(beta);
+        Tv n = 0;
+        for (auto &v : w) {
+            v *= bessel::i0(beta * sqrt(1 - pow(((n - alpha) / alpha), 2.0))) / d;
+            ++n;
+        }
+    }
+    return w;
+}
+
+/// \f[
+/// w(n) = e^{ -\frac{1}{2}\left(\alpha\frac{n}{N/2}\right)^2 }
+    /// \qquad -\frac{N-1}{2} \leq n \leq \frac{N-1}{2}
+/// \f]
+/// @image html window_gaussian.png
+template <class T>
+T& gaussian(T&& w, typename T::value_type a=2.5, bool symm=true) {
+    typedef typename T::value_type Tv;
+    if (w.size()>1) {
+        Tv len = w.size();
+        bool odd = w.size() & 1;
+        if (!symm && !odd) ++len;
+        Tv n = 0;
+        for (auto &v : w) {
+            Tv i = (n - (len - 1) / 2) * 2;
+            v *= exp(-0.5 * pow((a / len * i), 2));
+            ++n;
         }
     }
     return w;

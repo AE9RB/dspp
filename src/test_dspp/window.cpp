@@ -135,16 +135,73 @@ protected:
     }
 
     void chebyshev() {
+        auto limit = ::std::numeric_limits<T>::epsilon() * 32;
         vector<T> w;
         w = window::chebyshev(vector<T>(1,1));
         EXPECT_EQ((T)1, w[0]);
         w = window::chebyshev(vector<T>(8,1));
-        EXPECT_EQ((T)0.03638368090334488, w[7]);
+        EXPECT_NEAR((T)0.03638368090334488, w[7], limit);
         EXPECT_EQ((T)1, w[3]);
         EXPECT_EQ((T)1, w[4]);
         w = window::chebyshev(vector<T>(9,1));
-        EXPECT_EQ((T)0.021827407475211173, w[8]);
+        EXPECT_NEAR((T)0.021827407475211173, w[8], limit);
         EXPECT_EQ((T)1, w[4]);
+    }
+
+    void blackman() {
+        check([](size_t size, bool symm) {
+            return window::blackman(vector<T>(size,1),symm);
+        }, 0, 0, 0.066446609406726226, 0);
+    }
+
+    void nuttall() {
+        check([](size_t size, bool symm) {
+            return window::nuttall(vector<T>(size,1),symm);
+        }, 0, 0, 0.020039357146876685, 0);
+    }
+
+    void blackmannuttall() {
+        check([](size_t size, bool symm) {
+            return window::blackmannuttall(vector<T>(size,1),symm);
+        }, 0.0003628, 0.0003628, 0.025205566515401786, 0.0003628);
+    }
+
+    void blackmanharris() {
+        check([](size_t size, bool symm) {
+            return window::blackmanharris(vector<T>(size,1),symm);
+        }, 6e-5, 6e-5, 0.02173583701867959, 6e-5);
+    }
+
+    void flattop() {
+        check([](size_t size, bool symm) {
+            return window::flattop(vector<T>(size,1),symm);
+        }, -0.000421051, -0.000421051, -0.026872193286334629, -0.000421051);
+    }
+
+    void barthann() {
+        check([](size_t size, bool symm) {
+            return window::barthann(vector<T>(size,1),symm);
+        }, 0, 0, 0.17129942314911195, 0);
+    }
+
+    void hamming() {
+        check([](size_t size, bool symm) {
+            return window::hamming(vector<T>(size,1),symm);
+        }, 0.08, 0.08, 0.21473088065418822, 0.08);
+    }
+
+    void kaiser() {
+        check([](size_t size, bool symm) {
+            return window::kaiser(vector<T>(size,1),0.5,symm);
+        }, 0.94030621696795536, 0.94030621696795536,
+              0.96619399887124036, 0.94030621696795536);
+    }
+
+    void gaussian() {
+        check([](size_t size, bool symm) {
+            return window::gaussian(vector<T>(size,1),2.5,symm);
+        }, 0.09139375535604724, 0.084657988622529934,
+              0.24935220877729616, 0.084657988622529934);
     }
 
 };
@@ -157,6 +214,15 @@ TEST_T(Window, double, triang);
 TEST_T(Window, double, bartlett);
 TEST_T(Window, double, bohman);
 TEST_T(Window, double, chebyshev);
+TEST_T(Window, double, blackman);
+TEST_T(Window, double, nuttall);
+TEST_T(Window, double, blackmannuttall);
+TEST_T(Window, double, blackmanharris);
+TEST_T(Window, double, flattop);
+TEST_T(Window, double, barthann);
+TEST_T(Window, double, hamming);
+TEST_T(Window, double, kaiser);
+TEST_T(Window, double, gaussian);
 
 TEST_T(Window, float, rect);
 TEST_T(Window, float, hann);
@@ -166,3 +232,12 @@ TEST_T(Window, float, triang);
 TEST_T(Window, float, bartlett);
 TEST_T(Window, float, bohman);
 TEST_T(Window, float, chebyshev);
+TEST_T(Window, float, blackman);
+TEST_T(Window, float, nuttall);
+TEST_T(Window, float, blackmannuttall);
+TEST_T(Window, float, blackmanharris);
+TEST_T(Window, float, flattop);
+TEST_T(Window, float, barthann);
+TEST_T(Window, float, hamming);
+TEST_T(Window, float, kaiser);
+TEST_T(Window, float, gaussian);
