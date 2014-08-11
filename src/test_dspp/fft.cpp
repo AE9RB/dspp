@@ -77,6 +77,25 @@ class FFTcorrectness : public testing::Test {
     std::array<std::complex<T>, 8> test8_in;
     std::array<std::complex<T>, 8> test8_out;
 protected:
+    void czt() {
+        auto limit = ::std::numeric_limits<T>::epsilon() * 128;
+        for (size_t i=0; i<16; ++i) {
+            test16_in[i] = ref0[i];
+            if (i<8) test8_in[i] = ref0[i];
+        }
+        dspp::FFT::czt(test16_in.size(), test16_in.data());
+        for (size_t i=0; i<16; ++i) {
+            SCOPED_TRACE() << "i=" << i;
+            ASSERT_NEAR(ref1[i].real(), test16_in[i].real(), limit);
+            ASSERT_NEAR(ref1[i].imag(), test16_in[i].imag(), limit);
+        }
+        dspp::FFT::czt(test8_in.size(), test8_in.data());
+        for (size_t i=0; i<8; ++i) {
+            SCOPED_TRACE() << "i=" << i;
+            ASSERT_NEAR(ref2[i].real(), test8_in[i].real(), limit);
+            ASSERT_NEAR(ref2[i].imag(), test8_in[i].imag(), limit);
+        }
+    }
     void dft() {
         for (size_t i=0; i<16; ++i) {
             test16_in[i] = ref0[i];
@@ -131,6 +150,8 @@ protected:
     }
 };
 
+TEST_T(FFTcorrectness, double, czt)
+TEST_T(FFTcorrectness, float, czt)
 TEST_T(FFTcorrectness, double, dft)
 TEST_T(FFTcorrectness, float, dft)
 TEST_T(FFTcorrectness, double, idft)

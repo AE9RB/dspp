@@ -22,6 +22,8 @@
 #include <vector>
 #include <cmath>
 #include <cassert>
+#include <algorithm>
+#include "util.hpp"
 
 namespace dspp {
 
@@ -258,10 +260,10 @@ public:
     ///         for (j = 0; j <= n - 1; j++) {
     ///             a[j] *= 2.0 / n;
     ///         }
-    static void ddct(int n, int isgn, double *a)
+    static void ddct(size_t n, int isgn, T *a)
     {
-        int j, nw, nc;
-        double xr;
+        size_t j, nw, nc;
+        T xr;
 
         powcheck(n);
         nw = wt_n;
@@ -343,10 +345,10 @@ public:
     ///         for (j = 0; j <= n - 1; j++) {
     ///             a[j] *= 2.0 / n;
     ///         }
-    static void ddst(int n, int isgn, double *a)
+    static void ddst(size_t n, int isgn, T *a)
     {
-        int j, nw, nc;
-        double xr;
+        size_t j, nw, nc;
+        T xr;
 
         powcheck(n);
         nw = wt_n;
@@ -409,15 +411,15 @@ private:
         wt.shrink_to_fit();
         size_t nwh = nw >> 1;
         if (nw > 2) {
-            double delta = atan(1.0) / nwh;
+            T delta = atan(1.0) / nwh;
             wt[0] = 1;
             wt[1] = 0;
             wt[nwh] = cos(delta * nwh);
             wt[nwh + 1] = wt[nwh];
             if (nwh > 2) {
                 for (size_t j = 2; j < nwh; j += 2) {
-                    double x = cos(delta * j);
-                    double y = sin(delta * j);
+                    T x = cos(delta * j);
+                    T y = sin(delta * j);
                     wt[j] = x;
                     wt[j + 1] = y;
                     wt[nw - j] = y;
@@ -436,7 +438,7 @@ private:
         ct.shrink_to_fit();
         size_t nch = nc >> 1;
         if (nc > 1) {
-            double delta = atan(1.0) / nch;
+            T delta = atan(1.0) / nch;
             ct[0] = cos(delta * nch);
             ct[nch] = 0.5 * ct[0];
             for (size_t j = 1; j < nch; j++) {
@@ -1342,7 +1344,8 @@ inline void dft(size_t insize, const ::std::complex<T> *in, T *out, int unused =
 
 /// Discrete Fourier transform. In-place for C-style array.
 template<typename T, size_t N>
-inline void dft(T (&data)[N], int isgn = -1) {
+inline void dft(T (&data)[N], int isgn = -1)
+{
     dft(N, (T*)&data, isgn);
 }
 
@@ -1355,7 +1358,8 @@ inline void dft(T &data, int isgn = -1)
 
 /// Discrete Fourier transform. Out-of-place for C-style arrays.
 template<typename T1, size_t N1, typename T2, size_t N2>
-inline void dft(const T1 (&in)[N1], T2 (&out)[N2], int isgn = -1) {
+inline void dft(const T1 (&in)[N1], T2 (&out)[N2], int isgn = -1)
+{
     assert(sizeof(in) == sizeof(out));
     dft(N1, (T1*)&in, (T2*)&out, isgn);
 }
@@ -1380,6 +1384,38 @@ template<typename T>
 inline void dst(size_t n, T *data, int isgn = -1)
 {
     FFT_Impl<T>::ddst(n, isgn, data);
+}
+
+/// Chirp-z transform. In-place unsafe version.
+template<typename T>
+void czt(size_t n, ::std::complex<T> *data, size_t m=0, ::std::complex<T> w=0, T a=1)
+{
+    if (m == 0) m = n;
+    if (w == ::std::complex<T>(0,0)) w = exp(::std::complex<T>(0, -two_pi<T>() / m));
+    size_t len = 1;
+    while (len < m+n) len *= 2;
+    ::std::vector<::std::complex<T>> chirp;
+    long mm = ::std::max(m,n);
+    for (long i = 1-n; i <= mm; ++i) {
+        chirp.push_back(pow(w, ::std::pow((T)i,(T)2)/2));
+    }
+    ::std::vector<::std::complex<T>> xp(len, 0);
+    for (size_t i = 0; i < n; i++) {
+        xp[i] = data[i] * ::std::pow(a, (T)-i) * chirp[n+i-1];
+    }
+    ::std::vector<::std::complex<T>> ichirp(len, 0);
+    for (size_t i = 0; i < n+m-1; i++) {
+        ichirp[i] = (T)1.0 / chirp[i];
+    }
+    dft(xp);
+    dft(ichirp);
+    for (size_t i = 0; i < len; i++) {
+        xp[i] = xp[i] * ichirp[i];
+    }
+    dft(xp, 1);
+    for (size_t i = n-1; i < m+n-1; i++) {
+        data[i-n+1] = xp[i] / ::std::complex<T>(len) * chirp[i];
+    }
 }
 
 
