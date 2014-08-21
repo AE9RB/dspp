@@ -22,10 +22,6 @@
 using namespace std;
 using namespace dspp;
 
-#ifndef GNUPLOT_CMD
-#define GNUPLOT_CMD "/usr/local/bin/gnuplot"
-#endif
-
 #if defined(_WIN32)
 #include <io.h>
 #define POPEN _popen
