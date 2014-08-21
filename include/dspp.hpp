@@ -22,6 +22,8 @@ namespace dspp {
 }
 
 #include "dspp/util.hpp"
+#include "dspp/denormal.hpp"
+#include "dspp/bessel.hpp"
 #include "dspp/fft.hpp"
 #include "dspp/window.hpp"
 #include "dspp/mixer.hpp"

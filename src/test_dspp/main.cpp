@@ -15,8 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <benchtest.hpp>
+#include <dspp.hpp>
 
 int main() {
+    dspp::fast_denormals();
+
     testing::reporter(new testing::DefaultReporter);
     return testing::run();
 }
