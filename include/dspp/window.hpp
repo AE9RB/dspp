@@ -79,6 +79,7 @@ namespace window {
 /// @image html window_rect.png
 template <class T>
 T& rect(T&& w, bool symm=true) {
+    (void)symm;
     return w;
 }
 

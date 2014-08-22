@@ -1332,6 +1332,7 @@ inline void dft(size_t n, T *data, int isgn = -1)
 template<typename T>
 inline void dft(size_t insize, const T *in, ::std::complex<T> *out, int unused = 0)
 {
+    (void)unused;
     FFT_Impl<T>::rdft(insize, 1, in, (T*)out);
 }
 
@@ -1339,6 +1340,7 @@ inline void dft(size_t insize, const T *in, ::std::complex<T> *out, int unused =
 template<typename T>
 inline void dft(size_t insize, const ::std::complex<T> *in, T *out, int unused = 0)
 {
+    (void)unused;
     FFT_Impl<T>::rdft(insize*2, -1, (T*)in, out);
 }
 
