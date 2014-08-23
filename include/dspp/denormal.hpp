@@ -32,7 +32,7 @@ namespace dspp {
 /// setting processor flags. Generally, these flags are per-thread.
 ///
 /// Intel x86-64: enables FTZ and DAZ flags
-void fast_denormals(bool fast=true) {
+inline void fast_denormals(bool fast=true) {
 
     if (fast) {
         #ifdef __SSE__
