@@ -50,8 +50,6 @@ namespace dspp {
 /// <h2 class="groupheader"> Function Prototype</h2>
 /// <tt>\#include <dspp/window.hpp></tt>
 ///
-/// Window functions have the same prototype.
-/// @retval T& A reference to the container that was windowed.
 /// @param w A container of data for application of the window. To get the
 ///          window coefficients supply a container full of 1s. The container
 ///          must provide a forward iterator, T::value_type, and size().
@@ -62,14 +60,8 @@ namespace dspp {
 /// important then use a stored copy of the coefficients instead of generating
 /// the window every time.
 /// ~~~
-///     // Obtaining window coefficients
-///     auto w = dspp::window::hann(std::vector<float>(32,1));
-/// ~~~
-/// For creating FIR filters you can apply the window to an existing container.
-/// ~~~
-///     // Applying window to an existing container
-///     std::array<double, 128> filter = some_fir_filter();
-///     dspp::window::hann(filter);
+///     std::vector<float> w(32,1)
+///     dspp::window::hann(w);
 /// ~~~
 namespace window {
 
@@ -78,9 +70,9 @@ namespace window {
 /// \f]
 /// @image html window_rect.png
 template <class T>
-T& rect(T&& w, bool symm=true) {
+void rect(T& w, bool symm=true) {
     (void)symm;
-    return w;
+    (void)w;
 }
 
 /// @headerfile "include/dspp/fft.hpp"
@@ -95,7 +87,7 @@ T& rect(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_triang.png
 template <class T>
-T& triang(T&& w, bool symm=true) {
+void triang(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     Tv len = w.size();
     bool odd = w.size() & 1;
@@ -108,7 +100,6 @@ T& triang(T&& w, bool symm=true) {
         v *= 1 - fabs((n - midm) / midp);
         ++n;
     }
-    return w;
 }
 
 /// \f[
@@ -117,7 +108,7 @@ T& triang(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_bartlett.png
 template <class T>
-T& bartlett(T&& w, bool symm=true) {
+void bartlett(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -130,7 +121,6 @@ T& bartlett(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -139,7 +129,7 @@ T& bartlett(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_hann.png
 template <class T>
-T& hann(T&& w, bool symm=true) {
+void hann(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size() - 1;
@@ -151,7 +141,6 @@ T& hann(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -160,7 +149,7 @@ T& hann(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_welch.png
 template <class T>
-T& welch(T&& w, bool symm=true) {
+void welch(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     Tv len = w.size();
     bool odd = w.size() & 1;
@@ -172,7 +161,6 @@ T& welch(T&& w, bool symm=true) {
         v *= 1 - pow(((n - midm)/midp), 2);
         ++n;
     }
-    return w;
 }
 
 /// \f[
@@ -186,7 +174,7 @@ T& welch(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_parzen.png
 template <class T>
-T& parzen(T&& w, bool symm=true) {
+void parzen(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     Tv len = w.size();
     bool odd = w.size() & 1;
@@ -205,7 +193,6 @@ T& parzen(T&& w, bool symm=true) {
         }
         ++n;
     }
-    return w;
 }
 
 /// \f[
@@ -214,7 +201,7 @@ T& parzen(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_bohman.png
 template <class T>
-T& bohman(T&& w, bool symm=true) {
+void bohman(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size() - 1;
@@ -228,7 +215,6 @@ T& bohman(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -241,7 +227,7 @@ T& bohman(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_chebyshev.png
 template <class T>
-T& chebyshev(T&& w, typename T::value_type a = 100) {
+void chebyshev(T& w, typename T::value_type a = 100) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         size_t len = w.size();
@@ -270,7 +256,6 @@ T& chebyshev(T&& w, typename T::value_type a = 100) {
             if (++n >= len) n = 0;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -280,7 +265,7 @@ T& chebyshev(T&& w, typename T::value_type a = 100) {
 /// \f]
 /// @image html window_blackman.png
 template <class T>
-T& blackman(T&& w, bool symm=true) {
+void blackman(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -293,7 +278,6 @@ T& blackman(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -304,7 +288,7 @@ T& blackman(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_nuttall.png
 template <class T>
-T& nuttall(T&& w, bool symm=true) {
+void nuttall(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -318,7 +302,6 @@ T& nuttall(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -329,7 +312,7 @@ T& nuttall(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_blackmannuttall.png
 template <class T>
-T& blackmannuttall(T&& w, bool symm=true) {
+void blackmannuttall(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -343,7 +326,6 @@ T& blackmannuttall(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -354,7 +336,7 @@ T& blackmannuttall(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_blackmanharris.png
 template <class T>
-T& blackmanharris(T&& w, bool symm=true) {
+void blackmanharris(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -368,7 +350,6 @@ T& blackmanharris(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -380,7 +361,7 @@ T& blackmanharris(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_flattop.png
 template <class T>
-T& flattop(T&& w, bool symm=true) {
+void flattop(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -395,7 +376,6 @@ T& flattop(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -405,7 +385,7 @@ T& flattop(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_barthann.png
 template <class T>
-T& barthann(T&& w, bool symm=true) {
+void barthann(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -418,7 +398,6 @@ T& barthann(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -427,7 +406,7 @@ T& barthann(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_hamming.png
 template <class T>
-T& hamming(T&& w, bool symm=true) {
+void hamming(T& w, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -439,7 +418,6 @@ T& hamming(T&& w, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -449,7 +427,7 @@ T& hamming(T&& w, bool symm=true) {
 /// \f]
 /// @image html window_kaiser.png
 template <class T>
-T& kaiser(T&& w, typename T::value_type beta=10, bool symm=true) {
+void kaiser(T& w, typename T::value_type beta=10, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -463,7 +441,6 @@ T& kaiser(T&& w, typename T::value_type beta=10, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 /// \f[
@@ -472,7 +449,7 @@ T& kaiser(T&& w, typename T::value_type beta=10, bool symm=true) {
 /// \f]
 /// @image html window_gaussian.png
 template <class T>
-T& gaussian(T&& w, typename T::value_type a=2.5, bool symm=true) {
+void gaussian(T& w, typename T::value_type a=2.5, bool symm=true) {
     typedef typename T::value_type Tv;
     if (w.size()>1) {
         Tv len = w.size();
@@ -485,7 +462,6 @@ T& gaussian(T&& w, typename T::value_type a=2.5, bool symm=true) {
             ++n;
         }
     }
-    return w;
 }
 
 } /* namespace window */
